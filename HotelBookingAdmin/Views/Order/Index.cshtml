@@ -1,0 +1,528 @@
+﻿@using HotelBookingAdmin.Models
+@using HotelBookingAdmin.Helpers;
+@{
+  ViewBag.Title = "Index";
+  Layout = "~/Views/Shared/MainLayout/_Layout.cshtml";
+  List<HoaDon> hoaDons = (List<HoaDon>)ViewBag.HoaDons;
+  List<KhachHang> khachHangs = (List<KhachHang>)ViewBag.KhachHangs;
+  NhanVien loginUser = (NhanVien)Session["NhanVien"];
+}
+
+@{ Html.RenderPartial("PartialLayout/_PageHeader", "Order"); }
+
+<section class="content">
+  <div class="container-fluid">
+    <!-- Main row -->
+    <div class="row">
+      <!-- Left col -->
+      <section class="col-lg-6 connectedSortable ui-sortable">
+        <!-- Custom tabs (Charts with tabs)-->
+        <div class="card card-success">
+          <div class="card-header">
+            <h3 class="card-title">Total money</h3>
+
+            <div class="card-tools">
+              <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                <i class="fas fa-minus"></i>
+              </button>
+              <button type="button" class="btn btn-tool" data-card-widget="remove">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </div>
+          <div class="card-body" style="display: block;">
+            <div class="chart">
+              <div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
+              <canvas id="barChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%; display: block; width: 572px;" width="715" height="312" class="chartjs-render-monitor"></canvas>
+            </div>
+          </div>
+          <!-- /.card-body -->
+        </div>
+        <!-- /.card -->
+      </section>
+      <!-- /.Left col -->
+      <!-- right col (We are only adding the ID to make the widgets sortable)-->
+      <section class="col-lg-6 connectedSortable ui-sortable">
+        <div class="card bg-gradient-info">
+          <div class="card-header border-0">
+            <h3 class="card-title">
+              <i class="fas fa-th mr-1"></i>
+              Total days
+            </h3>
+
+            <div class="card-tools">
+              <button type="button"
+                      class="btn bg-info btn-sm"
+                      data-card-widget="collapse">
+                <i class="fas fa-minus"></i>
+              </button>
+              <button type="button"
+                      class="btn bg-info btn-sm"
+                      data-card-widget="remove">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </div>
+          <div class="card-body">
+            <canvas class="chart"
+                    id="line-chart"
+                    style="
+                        min-height: 250px;
+                        height: 250px;
+                        max-height: 250px;
+                        max-width: 100%;
+                      "></canvas>
+          </div>
+          <!-- /.card-body -->
+
+        </div>
+      </section>
+      <!-- right col -->
+    </div>
+
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Order Datatable</h3>
+          </div>
+          <!-- /.card-header -->
+          <div class="card-body">
+            <table id="example1" class="table table-bordered table-striped">
+              <thead>
+                <tr>
+                  <th>No. </th>
+                  <th>Email</th>
+                  <th>Room name</th>
+                  <th>Booking date</th>
+                  <th>Check-out date</th>
+                  <th>Total money($)</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                @foreach (HoaDon hd in hoaDons)
+                {
+                  <tr id="@hd.maHD">
+                    <td>@hd.maHD</td>
+                    <td>@hd.email</td>
+                    <td>@hd.tenPhong</td>
+                    <td>
+                      <input type="date" name="booking-date" value="@hd.ngayDat.Value.ToString("yyyy-MM-dd")" disabled />
+                    </td>
+                    <td>
+                      <input type="date" name="checkout-date" value="@hd.ngayTra.Value.ToString("yyyy-MM-dd")" disabled />
+                    </td>
+                    <td>@string.Format("{0:#.00}", hd.tienThanhToan)</td>
+
+                    <td class="text-right">
+                      <a class="btn btn-primary btn-sm" href="#" data-toggle="modal" data-target="#modal-default">
+                        <i class="fas fa-folder">
+                        </i>
+                        View
+                      </a>
+
+                      <a class="btn btn-info btn-sm" href="#" data-toggle="modal" data-target="#modal-edit">
+                        <i class="fas fa-pencil-alt">
+                        </i>
+                        Edit
+                      </a>
+
+                      @if (loginUser.MaCV == "admin")
+                      {
+                        <a class="btn btn-danger btn-sm" href="#">
+                          <i class="fas fa-trash">
+                          </i>
+                          Delete
+                        </a>
+                      }
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+          <!-- /.card-body -->
+        </div>
+        <!-- /.card -->
+      </div>
+      <!-- /.col -->
+    </div>
+    <!-- /.row (main row) -->
+  </div>
+  <!-- /.container-fluid -->
+</section>
+
+@{ Html.RenderPartial("PartialLayout/_ViewOrder"); }
+@{ Html.RenderPartial("PartialLayout/_EditOrder", khachHangs); }
+
+@{ Html.RenderPartial("PartialLayout/_Scripts"); }
+
+
+<!-- DataTables  & Plugins -->
+<script src="~/Assets/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="~/Assets/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="~/Assets/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+<script src="~/Assets/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+<script src="~/Assets/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+<script src="~/Assets/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+<script src="~/Assets/plugins/jszip/jszip.min.js"></script>
+<script src="~/Assets/plugins/pdfmake/pdfmake.min.js"></script>
+<script src="~/Assets/plugins/pdfmake/vfs_fonts.js"></script>
+<script src="~/Assets/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+<script src="~/Assets/plugins/datatables-buttons/js/buttons.print.min.js"></script>
+<script src="~/Assets/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+
+<script>
+  $(document).ready(function () {
+    // Make the dashboard widgets sortable Using jquery UI
+    $('.connectedSortable').sortable({
+      placeholder: 'sort-highlight',
+      connectWith: '.connectedSortable',
+      handle: '.card-header, .nav-tabs',
+      forcePlaceholderSize: true,
+      zIndex: 999999
+    })
+
+    $('.connectedSortable .card-header').css('cursor', 'move')
+
+
+    var checkoutDate = [];
+    var roomNames = [];
+    var totalMoneys = [];
+
+    @foreach (HoaDon hd in hoaDons)
+    {
+      @:checkoutDate.push("@hd.ngayTra.Value.Subtract(hd.ngayDat.Value).TotalDays");
+      @:roomNames.push("@hd.tenPhong");
+      @:totalMoneys.push(@hd.tienThanhToan);
+    }
+
+    var barChartData = {
+      labels: roomNames,
+      datasets: [
+        {
+          label: 'Total money',
+          backgroundColor: '#2ecc71',
+          borderColor: '#2ecc71',
+          pointRadius: false,
+          pointColor: '#3b8bba',
+          pointStrokeColor: 'rgba(60,141,188,1)',
+          pointHighlightFill: '#fff',
+          pointHighlightStroke: 'rgba(60,141,188,1)',
+          data: totalMoneys
+        }
+      ]
+    }
+
+    //- BAR CHART -
+    //-------------
+    var barChartCanvas = $('#barChart').get(0).getContext('2d')
+
+    var barChartOptions = {
+      responsive: true,
+      maintainAspectRatio: false,
+      datasetFill: false
+    }
+
+    const barChart = new Chart(barChartCanvas, {
+      type: 'bar',
+      data: barChartData,
+      options: barChartOptions
+    })
+
+// Sales graph chart
+var salesGraphChartCanvas = $('#line-chart').get(0).getContext('2d')
+// $('#revenue-chart').get(0).getContext('2d');
+
+    var salesGraphChartData = {
+      labels: roomNames,
+      datasets: [
+        {
+          label: 'Total days',
+          fill: false,
+          borderWidth: 2,
+          lineTension: 0,
+          spanGaps: true,
+          borderColor: '#efefef',
+          pointRadius: 3,
+          pointHoverRadius: 7,
+          pointColor: '#efefef',
+          pointBackgroundColor: '#efefef',
+          data: checkoutDate
+          },
+      ]
+    }
+
+    var salesGraphChartOptions = {
+      maintainAspectRatio: false,
+      responsive: true,
+      legend: {
+        display: false
+      },
+      scales: {
+        xAxes: [{
+          ticks: {
+            fontColor: '#efefef'
+          },
+          gridLines: {
+            display: false,
+            color: '#efefef',
+            drawBorder: false
+          }
+        }],
+        yAxes: [{
+          ticks: {
+            stepSize: 1,
+            fontColor: '#efefef'
+          },
+          gridLines: {
+            display: true,
+            color: '#efefef',
+            drawBorder: false
+          }
+        }]
+      }
+    }
+
+  // This will get the first returned node in the jQuery collection.
+  // eslint-disable-next-line no-unused-vars
+  const lineChart = new Chart(salesGraphChartCanvas, { // lgtm[js/unused-local-variable]
+    type: 'line',
+    data: salesGraphChartData,
+    options: salesGraphChartOptions
+    })
+
+    $("#example1").DataTable({
+    "responsive": true, "lengthChange": false, "autoWidth": false,
+    "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+  }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+  $('#example2').DataTable({
+    "paging": true,
+    "lengthChange": false,
+    "searching": false,
+    "ordering": true,
+    "info": true,
+    "autoWidth": false,
+    "responsive": true,
+  });
+
+  let row = null;
+  let cols = null;
+
+  $("#example1").click(function (e) {
+    if (e.target.classList.contains("btn-primary")) {
+      row = $(e.target).parents("tr");
+      cols = row.children("td");
+
+      fillInput(cols);
+      return;
+    }
+
+    if (e.target.classList.contains("btn-info")) {
+      row = $(e.target).parents("tr");
+      cols = row.children("td");
+
+      fillEdit(cols);
+      return;
+    }
+  });
+
+  $("#edit-submit-btn").on("click", (e) => {
+    const hoaDon = {
+      maHD: $("#modal-edit-no-text").val(),
+      email: $("#modal-edit-email-text").val(),
+
+      tenPhong: $("#modal-edit-name-text").val(),
+      ngayDat: $("#modal-edit-booking-date-text").val(),
+      ngayTra: $("#modal-edit-checkout-date-text").val(),
+
+      tienThanhToan: $("#modal-edit-total-money-text").val(),
+    }
+
+    submitData(e, hoaDon);
+  })
+
+
+  function submitData(e, hoaDon) {
+    $.ajax({
+      url: '/Order/UpdateOrder',
+      type: 'POST',
+      contentType: 'application/json',
+      data: JSON.stringify(hoaDon)
+    }).done(function (res) {
+      updateTable(res);
+      clearInput();
+
+      const checkoutDate = [];
+      const roomNames = [];
+      const totalMoneys = [];
+      const listHD = res.listHD;
+
+      for (let hd of listHD) {
+        roomNames.push(hd.tenPhong);
+        totalMoneys.push(hd.tienThanhToan)
+
+        const dt1 = new Date(parseInt(hd.ngayDat.substr(6)));
+        const dt2 = new Date(parseInt(hd.ngayTra.substr(6)));
+        const time = dt2.getTime() - dt1.getTime();
+        const totalDays = time / (1000 * 3600 * 24);
+
+        checkoutDate.push(totalDays);
+      }
+
+      updateBarChart(roomNames, totalMoneys);
+      updateLineChart(roomNames, checkoutDate);
+    })
+  }
+
+  function updateTable(res) {
+    cols[0].innerText = $("#modal-edit-no-text").val();
+    cols[1].innerText = $("#modal-edit-email-text").val();
+    cols[2].innerText = $("#modal-edit-name-text").val();
+
+    $(cols[3]).children().val($("#modal-edit-booking-date-text").val());
+    $(cols[4]).children().val($("#modal-edit-checkout-date-text").val());
+
+    const formatter = new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD'
+    });
+
+    cols[5].innerText = formatter.format(res.result.tienThanhToan).substring(1);
+  }
+
+  function fillInput(cols) {
+    $("#modal-no-text").val(cols[0].innerText);
+    $("#modal-email-text").val(cols[1].innerText);
+    $("#modal-name-text").val(cols[2].innerText);
+    $("#modal-booking-date-text").val($(cols[3]).children().val());
+    $("#modal-checkout-date-text").val($(cols[4]).children().val());
+    $("#modal-total-money-text").val(cols[5].innerText);
+    }
+
+  function fillEdit(cols) {
+    $("#modal-edit-no-text").val(cols[0].innerText);
+    $("#modal-edit-email-text").val(cols[1].innerText);
+    $("#modal-edit-name-text").val(cols[2].innerText);
+    $("#modal-edit-booking-date-text").val($(cols[3]).children().val());
+
+    const checkoutDateVal = new Date($(cols[3]).children().val());
+    const checkoutDateMin = new Date(checkoutDateVal.setDate(checkoutDateVal.getDate() + 1));
+    const month = (checkoutDateMin.getUTCMonth() + 1).toString().padStart(2, '0'); //months from 1-12
+    const day = checkoutDateMin.getUTCDate().toString().padStart(2, "0");
+    const year = checkoutDateMin.getUTCFullYear();
+
+    const newdate = year + "-" + month + "-" + day;
+
+    $("#modal-edit-checkout-date-text").prop("min", newdate);
+    $("#modal-edit-checkout-date-text").val($(cols[4]).children().val());
+    $("#modal-edit-total-money-text").val(cols[5].innerText);
+  }
+
+  function clearInput() {
+    $("#modal-no-text").val("");
+    $("#modal-email-text").val(cols[1].innerText);
+    $("#modal-name-text").val(cols[2].innerText);
+    $("#modal-booking-date-text").val($(cols[3]).children().val());
+    $("#modal-checkout-date-text").val($(cols[4]).children().val());
+    $("#modal-total-money-text").val(cols[5].innerText);
+  }
+
+  function updateBarChart(roomNames, totalMoneys) {
+    const barChartData = {
+      labels: roomNames,
+      datasets: [
+        {
+          label: 'Total money',
+          backgroundColor: 'rgba(60,141,188,0.9)',
+          borderColor: 'rgba(60,141,188,0.8)',
+          pointRadius: false,
+          pointColor: '#3b8bba',
+          pointStrokeColor: 'rgba(60,141,188,1)',
+          pointHighlightFill: '#fff',
+          pointHighlightStroke: 'rgba(60,141,188,1)',
+          data: totalMoneys
+        }
+      ]
+    }
+
+    barChart.data = barChartData;
+    barChart.update();
+  }
+
+  function updateLineChart(roomNames, checkoutDate) {
+    const salesGraphChartData = {
+      labels: roomNames,
+      datasets: [
+        {
+          label: 'Total days',
+          fill: false,
+          borderWidth: 2,
+          lineTension: 0,
+          spanGaps: true,
+          borderColor: '#efefef',
+          pointRadius: 3,
+          pointHoverRadius: 7,
+          pointColor: '#efefef',
+          pointBackgroundColor: '#efefef',
+          data: checkoutDate
+        },
+      ]
+    }
+
+    lineChart.data = salesGraphChartData;
+    lineChart.update();
+    }
+
+    $(".btn-danger").click(function (e) {
+      const row = $(e.currentTarget).parents("tr");
+      const cols = row.children("td");
+
+      $.ajax({
+        url: "/Order/DeleteOrder",
+        type: "POST",
+        dataType: "json",
+        data: { maHD: cols[0].innerText }
+      }).done(function (result) {
+        const listHD = result.listHD;
+        const checkoutDate = [];
+        const roomNames = [];
+        const totalMoneys = [];
+
+        for (let hd of listHD) {
+          roomNames.push(hd.tenPhong);
+          totalMoneys.push(hd.tienThanhToan)
+
+          const dt1 = new Date(parseInt(hd.ngayDat.substr(6)));
+          const dt2 = new Date(parseInt(hd.ngayTra.substr(6)));
+          const time = dt2.getTime() - dt1.getTime();
+          const totalDays = time / (1000 * 3600 * 24);
+
+          checkoutDate.push(totalDays);
+        }
+
+        updateBarChart(roomNames, totalMoneys);
+        updateLineChart(roomNames, checkoutDate);
+
+        row.remove();
+      })
+    })
+
+    $("#modal-edit-booking-date-text").change(function (e) {
+      const checkoutDateVal = new Date($(e.currentTarget).val());
+      const checkoutDateMin = new Date(checkoutDateVal.setDate(checkoutDateVal.getDate() + 1));
+      const month = (checkoutDateMin.getUTCMonth() + 1).toString().padStart(2, '0'); //months from 1-12
+      const day = checkoutDateMin.getUTCDate().toString().padStart(2, "0");
+      const year = checkoutDateMin.getUTCFullYear();
+
+      const newdate = year + "-" + month + "-" + day;
+
+      $("#modal-edit-checkout-date-text").prop("min", newdate);
+      $("#modal-edit-checkout-date-text").val(newdate);
+    })
+
+  })
+
+</script>
+

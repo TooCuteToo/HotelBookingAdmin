@@ -1,0 +1,275 @@
+﻿@using HotelBookingAdmin.Models
+@{
+  ViewData["Title"] = "Employee";
+  Layout = "~/Views/Shared/MainLayout/_Layout.cshtml";
+  List<NhanVien> nhanViens = (List<NhanVien>)ViewBag.NhanViens;
+  NhanVien loginUser = (NhanVien)Session["NhanVien"];
+}
+
+@{ Html.RenderPartial("PartialLayout/_PageHeader", "Employee"); }
+
+<section class="content">
+  <div class="container-fluid">
+
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Employee Datatable</h3>
+          </div>
+          <!-- /.card-header -->
+          <div class="card-body">
+            <table id="example1" class="table table-bordered table-striped">
+              <thead>
+                <tr>
+                  <th>No.</th>
+                  <th>Fullname</th>
+                  <th>Role</th>
+                  <th>Gender</th>
+                  <th>DOB</th>
+                  <th>Email</th>
+                  <th>Phone number</th>
+                  <th>Address</th>
+                  <th>Password</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                @foreach (NhanVien nv in nhanViens)
+                {
+                  <tr id="@nv.MaNV">
+                    <td>@nv.MaNV</td>
+                    <td>@nv.TenNV</td>
+                    <td>@nv.MaCV</td>
+
+                    @if (nv.GioiTinh == "Female")
+                    {
+                      <td class="text-center">
+                        <input type="checkbox" name="gender" value="Female" checked disabled />
+                      </td>
+                    }
+                    else
+                    {
+                      <td class="text-center">
+                        <input type="checkbox" name="gender" value="Female" disabled />
+                      </td>
+                    }
+                    
+                    @if (nv.NgaySinh == null)
+                    {
+                      <td>
+                        <input type="date" name="dob" value="@DateTime.Now.ToString("yyyy-MM-dd")" disabled />
+                      </td>
+                    } else
+                    {
+                      <td>
+                        <input type="date" name="dob" value="@nv.NgaySinh.Value.ToString("yyyy-MM-dd")" disabled />
+                      </td>
+                    }
+
+                    <td>@nv.Email</td>
+                    <td>@nv.SDT_NV</td>
+                    <td>@nv.DiaChi_NV</td>
+                    <td>
+                      <input type="password" name="password" value="@nv.Password" disabled />
+                    </td>
+                    <td class="text-right">
+                      <a class="btn btn-primary btn-sm" href="#" data-toggle="modal" data-target="#modal-default">
+                        <i class="fas fa-folder">
+                        </i>
+                        View
+                      </a>
+
+                      @if (loginUser.MaCV == "admin")
+                      {
+                        <a class="btn btn-info btn-sm" href="#" data-toggle="modal" data-target="#modal-edit">
+                          <i class="fas fa-pencil-alt">
+                          </i>
+                          Edit
+                        </a>
+                      }
+
+                      @if (loginUser.MaCV == "admin")
+                      {
+                        <a class="btn btn-danger btn-sm" href="#">
+                          <i class="fas fa-trash">
+                          </i>
+                          Delete
+                        </a>
+                      }
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+          <!-- /.card-body -->
+        </div>
+        <!-- /.card -->
+      </div>
+      <!-- /.col -->
+    </div>
+    <!-- /.row -->
+  </div>
+  <!-- /.container-fluid -->
+</section>
+
+@{ Html.RenderPartial("PartialLayout/_ViewEmployee"); }
+@{ Html.RenderPartial("PartialLayout/_EditEmployee"); }
+
+@{ Html.RenderPartial("PartialLayout/_Scripts"); }
+
+<!-- DataTables  & Plugins -->
+<script src="~/Assets/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="~/Assets/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="~/Assets/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+<script src="~/Assets/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+<script src="~/Assets/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+<script src="~/Assets/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+<script src="~/Assets/plugins/jszip/jszip.min.js"></script>
+<script src="~/Assets/plugins/pdfmake/pdfmake.min.js"></script>
+<script src="~/Assets/plugins/pdfmake/vfs_fonts.js"></script>
+<script src="~/Assets/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+<script src="~/Assets/plugins/datatables-buttons/js/buttons.print.min.js"></script>
+<script src="~/Assets/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+
+<!-- Page specific script -->
+<script>
+  $(function () {
+    $("#example1").DataTable({
+      "responsive": true, "lengthChange": false, "autoWidth": false,
+      "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+    $('#example2').DataTable({
+      "paging": true,
+      "lengthChange": false,
+      "searching": false,
+      "ordering": true,
+      "info": true,
+      "autoWidth": false,
+      "responsive": true,
+    });
+
+    let row = null;
+    let cols = null;
+
+    $("#example1").click(function (e) {
+      if (e.target.classList.contains("btn-primary")) {
+        row = $(e.target).parents("tr");
+        cols = row.children("td");
+
+        fillInput(cols);
+        return;
+      }
+
+      if (e.target.classList.contains("btn-info")) {
+        row = $(e.target).parents("tr");
+        cols = row.children("td");
+
+        fillEdit(cols);
+        return;
+      }
+    });
+
+    $("#edit-submit-btn").on("click", (e) => {
+      const nhanVien = {
+        TenNV: $("#modal-edit-name-text").val(),
+        MaCV: $("#modal-edit-role-text").val().toLowerCase(),
+
+        GioiTinh: $("#modal-edit-gender-text").prop("checked") ? "Female" : "Male",
+        NgaySinh: $("#modal-edit-dob-text").val(),
+        Email: $("#modal-edit-email-text").val(),
+
+        SDT_NV: $("#modal-edit-phone-text").val(),
+        DiaChi_NV: $("#modal-edit-address-text").val(),
+        Password: $("#modal-edit-password-text").val()
+      }
+
+      updateTable();
+      submitData(e, nhanVien);
+    })
+
+    function submitData(e, nhanVien) {
+      $.ajax({
+        url: '/Customer/UpdateEmployee',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(nhanVien)
+      }).done(function (result) {
+        console.log(result);
+
+        if (result.loginNv) {
+          $(".status-name").text(result.loginNv.TenNV);
+        }
+
+        clearInput();
+      })
+    }
+
+    function updateTable() {
+      cols[1].innerText = $("#modal-edit-name-text").val();
+      cols[2].innerText = $("#modal-edit-role-text").val();
+
+      $(cols[3]).children().prop("checked", $("#modal-edit-gender-text").prop("checked"));
+      $(cols[4]).children().val($("#modal-edit-dob-text").val());
+
+      cols[5].innerText = $("#modal-edit-email-text").val();
+      cols[6].innerText = $("#modal-edit-phone-text").val();
+
+      cols[7].innerText = $("#modal-edit-address-text").val();
+      $(cols[8]).children().val($("#modal-edit-password-text").val());
+    }
+
+    function fillInput(cols) {
+      const genderCheck = $(cols[3]).children().prop("checked");
+
+      $("#modal-name-text").val(cols[1].innerText);
+      $("#modal-role-text").val(cols[2].innerText);
+      $("#modal-gender-text").prop("checked", genderCheck);
+      $("#modal-dob-text").val($(cols[4]).children().val());
+      $("#modal-email-text").val(cols[5].innerText);
+      $("#modal-phone-text").val(cols[6].innerText);
+      $("#modal-address-text").val(cols[7].innerText);
+      $("#modal-password-text").val($(cols[8]).children().val());
+    }
+
+    function fillEdit(cols) {
+      const genderCheck = $(cols[3]).children().prop("checked");
+
+      $("#modal-edit-name-text").val(cols[1].innerText);
+      $("#modal-edit-role-text").val(cols[2].innerText.toLowerCase());
+      $("#modal-edit-gender-text").prop("checked", genderCheck);
+      $("#modal-edit-dob-text").val($(cols[4]).children().val());
+      $("#modal-edit-email-text").val(cols[5].innerText);
+      $("#modal-edit-phone-text").val(cols[6].innerText);
+      $("#modal-edit-address-text").val(cols[7].innerText);
+      $("#modal-edit-password-text").val($(cols[8]).children().val());
+    }
+
+    function clearInput() {
+      $("#modal-edit-name-text").val("");
+      $("#modal-edit-role-text").val("");
+      $("#modal-edit-gender-text").prop("checked", false);
+      $("#modal-edit-dob-text").val("");
+      $("#modal-edit-email-text").val("");
+      $("#modal-edit-phone-text").val("");
+      $("#modal-edit-address-text").val("");
+      $("#modal-edit-password-text").val("");
+    }
+
+    $(".fa-trash").parent().click(function (e) {
+      const row = $(e.currentTarget).parents("tr");
+      const cols = row.children("td");
+
+      $.ajax({
+        url: "/Customer/Employee",
+        type: "POST",
+        dataType: "json",
+        data: { email: cols[5].innerText }
+      }).done(function (result) {
+        console.log(result.message);
+        row.remove();
+      })
+    });
+  });
+</script>

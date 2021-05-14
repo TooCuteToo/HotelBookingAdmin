@@ -1,0 +1,74 @@
+﻿@using HotelBookingAdmin.Models
+@model List<KhachHang>
+
+<div class="modal fade" id="modal-edit" style="display: none;" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Order Information</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+        <img class="img-fluid d-block m-auto" id="modal-img" src="https://taker.io/wp-content/uploads/2019/10/Online-Ordering-System-for-Restaurants-min.png" style="width: 200px;" />
+
+        <form action="" method="post" class="mt-3">
+          <div class="form-group row">
+            <label for="modal-edit-no-text" class="col-sm-4 col-form-label">No.</label>
+            <div class="col-sm-8">
+              <input type="text" readonly class="form-control" id="modal-edit-no-text" />
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <label for="modal-edit-email-text" class="col-sm-4 col-form-label">Email</label>
+            <div class="col-sm-8">
+              <select id="modal-edit-email-text" class="form-control">
+                @foreach (KhachHang kh in Model)
+                {
+                  <option value="@kh.email">@kh.email</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <label for="modal-edit-name-text" class="col-sm-4 col-form-label">Room name</label>
+            <div class="col-sm-8">
+              <input type="text" readonly class="form-control" id="modal-edit-name-text" />
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <label for="modal-edit-booking-date-text" class="col-sm-4 col-form-label">Booking date</label>
+            <div class="col-sm-8">
+              <input type="date" class="form-control" id="modal-edit-booking-date-text" min="@DateTime.Now.ToString("yyyy-MM-dd")" />
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <label for="modal-edit-checkout-date-text" class="col-sm-4 col-form-label">Check-out date</label>
+            <div class="col-sm-8">
+              <input type="date" class="form-control" id="modal-edit-checkout-date-text" />
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <label for="modal-edit-total-money-text" class="col-sm-4 col-form-label">Total money($)</label>
+            <div class="col-sm-8">
+              <input type="text" readonly class="form-control" id="modal-edit-total-money-text" />
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer justify-content-center">
+        <button type="button" class="btn btn-success" data-dismiss="modal" id="edit-submit-btn">Submit</button>
+      </div>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+

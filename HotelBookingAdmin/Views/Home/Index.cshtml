@@ -1,0 +1,544 @@
+﻿@using HotelBookingAdmin.Models
+@{
+  ViewData["Title"] = "Home Page";
+  Layout = "~/Views/Shared/MainLayout/_Layout.cshtml";
+  int totalRoom = ViewBag.TotalRoom;
+  List<int> statisticsInfo = (List<int>)ViewBag.StatisticsInfo;
+  List<Phong> phongs = (List<Phong>)ViewBag.Phongs;
+  List<double> listPercent = (List<double>)ViewBag.RatePercents;
+}
+
+@{ Html.RenderPartial("PartialLayout/_PageHeader", "Dashboard"); }
+
+<section class="content">
+  <div class="container-fluid">
+    <!-- Small boxes (Stat box) -->
+    <div class="row">
+      <div class="col-lg-3 col-6">
+        <!-- small box -->
+        <div class="small-box bg-info">
+          <div class="inner">
+            <h3>@statisticsInfo[0]</h3>
+
+            <p>Employees</p>
+          </div>
+          <div class="icon">
+            <i class="ion ion-bag"></i>
+          </div>
+          <a href="@Url.Action("Employee", "Customer")" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+        </div>
+      </div>
+      <!-- ./col -->
+      <div class="col-lg-3 col-6">
+        <!-- small box -->
+        <div class="small-box bg-success">
+          <div class="inner">
+            <h3>@statisticsInfo[1]</h3>
+
+            <p>Customers</p>
+          </div>
+          <div class="icon">
+            <i class="ion ion-stats-bars"></i>
+          </div>
+          <a href="@Url.Action("Index", "Customer")" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+        </div>
+      </div>
+      <!-- ./col -->
+      <div class="col-lg-3 col-6">
+        <!-- small box -->
+        <div class="small-box bg-warning">
+          <div class="inner">
+            <h3>@statisticsInfo[2]</h3>
+
+            <p>Empty rooms</p>
+          </div>
+          <div class="icon">
+            <i class="ion ion-person-add"></i>
+          </div>
+          <a href="@Url.Action("Index", "Room")" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+        </div>
+      </div>
+      <!-- ./col -->
+      <div class="col-lg-3 col-6">
+        <!-- small box -->
+        <div class="small-box bg-danger">
+          <div class="inner">
+            <h3>@statisticsInfo[3]</h3>
+
+            <p>Occupied rooms</p>
+          </div>
+          <div class="icon">
+            <i class="ion ion-pie-graph"></i>
+          </div>
+          <a href="@Url.Action("Index", "Order")" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+        </div>
+      </div>
+      <!-- ./col -->
+    </div>
+    <!-- /.row -->
+    <!-- Main row -->
+    <div class="row">
+      <!-- Left col -->
+      <section class="col-lg-6 connectedSortable ui-sortable">
+        <!-- Custom tabs (Charts with tabs)-->
+        <div class="card">
+          <div class="card-header ui-sortable-handle" style="cursor: move;">
+            <h3 class="card-title">
+              <i class="fas fa-chart-pie mr-1"></i>
+              Check in
+            </h3>
+            <div class="card-tools">
+              <ul class="nav nav-pills ml-auto">
+                <li class="nav-item">
+                  <a class="nav-link active" href="#sales-chart" data-toggle="tab">Donut</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <!-- /.card-header -->
+          <div class="card-body">
+            <div class="tab-content p-0">
+              <!-- Morris chart - Sales -->
+              <div class="chart tab-pane active" id="sales-chart" style="position: relative; height: 300px">
+                <canvas id="sales-chart-canvas" height="0" style="height: 0px; display: block; width: 0px;" width="0" class="chartjs-render-monitor"></canvas>
+              </div>
+            </div>
+          </div>
+          <!-- /.card-body -->
+        </div>
+        <!-- /.card -->
+        <!-- TO DO List -->
+        <div class="card">
+          <div class="card-header ui-sortable-handle" style="cursor: move;">
+            <h3 class="card-title">
+              <i class="ion ion-clipboard mr-1"></i>
+              To Do List
+            </h3>
+
+          </div>
+          <!-- /.card-header -->
+          <div class="card-body">
+            <ul class="todo-list ui-sortable" data-widget="todo-list" style="overflow-y: auto;">
+              <li>
+                <!-- drag handle -->
+                <span class="handle ui-sortable-handle">
+                  <i class="fas fa-ellipsis-v"></i>
+                  <i class="fas fa-ellipsis-v"></i>
+                </span>
+                <!-- checkbox -->
+                <div class="icheck-primary d-inline ml-2">
+                  <input type="checkbox" value="" name="todo1" id="todoCheck1">
+                  <label for="todoCheck1"></label>
+                </div>
+                <!-- todo text -->
+                <span class="text">Design a nice theme</span>
+                <!-- General tools such as edit or delete-->
+                <div class="tools">
+                  <i class="fas fa-edit"></i>
+                  <i class="fas fa-trash-o"></i>
+                </div>
+              </li>
+              <li class="done">
+                <span class="handle ui-sortable-handle">
+                  <i class="fas fa-ellipsis-v"></i>
+                  <i class="fas fa-ellipsis-v"></i>
+                </span>
+                <div class="icheck-primary d-inline ml-2">
+                  <input type="checkbox" value="" name="todo2" id="todoCheck2" checked="">
+                  <label for="todoCheck2"></label>
+                </div>
+                <span class="text">Make the theme responsive</span>
+                <div class="tools">
+                  <i class="fas fa-edit"></i>
+                  <i class="fas fa-trash-o"></i>
+                </div>
+              </li>
+              <li>
+                <span class="handle ui-sortable-handle">
+                  <i class="fas fa-ellipsis-v"></i>
+                  <i class="fas fa-ellipsis-v"></i>
+                </span>
+                <div class="icheck-primary d-inline ml-2">
+                  <input type="checkbox" value="" name="todo3" id="todoCheck3">
+                  <label for="todoCheck3"></label>
+                </div>
+                <span class="text">Let theme shine like a star</span>
+                <div class="tools">
+                  <i class="fas fa-edit"></i>
+                  <i class="fas fa-trash-o"></i>
+                </div>
+              </li>
+              <li>
+                <span class="handle ui-sortable-handle">
+                  <i class="fas fa-ellipsis-v"></i>
+                  <i class="fas fa-ellipsis-v"></i>
+                </span>
+                <div class="icheck-primary d-inline ml-2">
+                  <input type="checkbox" value="" name="todo4" id="todoCheck4">
+                  <label for="todoCheck4"></label>
+                </div>
+                <span class="text">Let theme shine like a star</span>
+                <div class="tools">
+                  <i class="fas fa-edit"></i>
+                  <i class="fas fa-trash-o"></i>
+                </div>
+              </li>
+              <li>
+                <span class="handle ui-sortable-handle">
+                  <i class="fas fa-ellipsis-v"></i>
+                  <i class="fas fa-ellipsis-v"></i>
+                </span>
+                <div class="icheck-primary d-inline ml-2">
+                  <input type="checkbox" value="" name="todo5" id="todoCheck5">
+                  <label for="todoCheck5"></label>
+                </div>
+                <span class="text">Check your messages and notifications</span>
+                <div class="tools">
+                  <i class="fas fa-edit"></i>
+                  <i class="fas fa-trash-o"></i>
+                </div>
+              </li>
+              <li>
+                <span class="handle ui-sortable-handle">
+                  <i class="fas fa-ellipsis-v"></i>
+                  <i class="fas fa-ellipsis-v"></i>
+                </span>
+                <div class="icheck-primary d-inline ml-2">
+                  <input type="checkbox" value="" name="todo6" id="todoCheck6">
+                  <label for="todoCheck6"></label>
+                </div>
+                <span class="text">Let theme shine like a star</span>
+                <div class="tools">
+                  <i class="fas fa-edit"></i>
+                  <i class="fas fa-trash-o"></i>
+                </div>
+              </li>
+
+              <li>
+                <!-- drag handle -->
+                <span class="handle ui-sortable-handle">
+                  <i class="fas fa-ellipsis-v"></i>
+                  <i class="fas fa-ellipsis-v"></i>
+                </span>
+                <!-- checkbox -->
+                <div class="icheck-primary d-inline ml-2">
+                  <input type="checkbox" value="" name="todo1" id="todoCheck1">
+                  <label for="todoCheck1"></label>
+                </div>
+                <!-- todo text -->
+                <span class="text">Design a nice theme</span>
+                <!-- General tools such as edit or delete-->
+                <div class="tools">
+                  <i class="fas fa-edit"></i>
+                  <i class="fas fa-trash-o"></i>
+                </div>
+              </li>
+
+              <li>
+                <!-- drag handle -->
+                <span class="handle ui-sortable-handle">
+                  <i class="fas fa-ellipsis-v"></i>
+                  <i class="fas fa-ellipsis-v"></i>
+                </span>
+                <!-- checkbox -->
+                <div class="icheck-primary d-inline ml-2">
+                  <input type="checkbox" value="" name="todo1" id="todoCheck1">
+                  <label for="todoCheck1"></label>
+                </div>
+                <!-- todo text -->
+                <span class="text">Design a nice theme</span>
+                <!-- General tools such as edit or delete-->
+                <div class="tools">
+                  <i class="fas fa-edit"></i>
+                  <i class="fas fa-trash-o"></i>
+                </div>
+              </li>
+
+              <li>
+                <!-- drag handle -->
+                <span class="handle ui-sortable-handle">
+                  <i class="fas fa-ellipsis-v"></i>
+                  <i class="fas fa-ellipsis-v"></i>
+                </span>
+                <!-- checkbox -->
+                <div class="icheck-primary d-inline ml-2">
+                  <input type="checkbox" value="" name="todo1" id="todoCheck1">
+                  <label for="todoCheck1"></label>
+                </div>
+                <!-- todo text -->
+                <span class="text">Design a nice theme</span>
+                <!-- General tools such as edit or delete-->
+                <div class="tools">
+                  <i class="fas fa-edit"></i>
+                  <i class="fas fa-trash-o"></i>
+                </div>
+              </li>
+
+            </ul>
+          </div>
+          <!-- /.card-body -->
+          <div class="card-footer clearfix">
+            <button type="button" class="btn btn-primary float-right">
+              <i class="fas fa-plus"></i> Add item
+            </button>
+          </div>
+        </div>
+        <!-- /.card -->
+      </section>
+      <!-- /.Left col -->
+      <!-- right col (We are only adding the ID to make the widgets sortable)-->
+      <section class="col-lg-6 connectedSortable ui-sortable">
+        <div class="card bg-gradient-info">
+          <div class="card-header border-0">
+            <h3 class="card-title">
+              <i class="fas fa-th mr-1"></i>
+              Sales Graph
+            </h3>
+
+            <div class="card-tools">
+              <button type="button"
+                      class="btn bg-info btn-sm"
+                      data-card-widget="collapse">
+                <i class="fas fa-minus"></i>
+              </button>
+              <button type="button"
+                      class="btn bg-info btn-sm"
+                      data-card-widget="remove">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </div>
+          <div class="card-body">
+            <canvas class="chart"
+                    id="line-chart"
+                    style="
+                        min-height: 250px;
+                        height: 250px;
+                        max-height: 250px;
+                        max-width: 100%;
+                      "></canvas>
+          </div>
+          <!-- /.card-body -->
+          <div class="card-footer bg-transparent">
+            <div class="row">
+              <div class="col-4 text-center">
+                <input type="text"
+                       class="knob"
+                       data-readonly="true"
+                       value="@listPercent[0]"
+                       data-width="60"
+                       data-height="60"
+                       data-fgColor="#95B1B0" />
+
+                <div class="text-white">Bad</div>
+              </div>
+              <!-- ./col -->
+              <div class="col-4 text-center">
+                <input type="text"
+                       class="knob"
+                       data-readonly="true"
+                       value="@listPercent[1]"
+                       data-width="60"
+                       data-height="60"
+                       data-fgColor="#95B1B0" />
+
+                <div class="text-white">Average</div>
+              </div>
+              <!-- ./col -->
+              <div class="col-4 text-center">
+                <input type="text"
+                       class="knob"
+                       data-readonly="true"
+                       value="@listPercent[2]"
+                       data-width="60"
+                       data-height="60"
+                       data-fgColor="#95B1B0" />
+
+                <div class="text-white">Good</div>
+              </div>
+              <!-- ./col -->
+            </div>
+            <!-- /.row -->
+          </div>
+          <!-- /.card-footer -->
+        </div>
+        <!-- Calendar -->
+        <div class="card bg-gradient-success">
+          <div class="card-header border-0 ui-sortable-handle" style="cursor: move;">
+            <h3 class="card-title">
+              <i class="far fa-calendar-alt"></i>
+              Calendar
+            </h3>
+            <!-- tools card -->
+            <div class="card-tools">
+              <!-- button with a dropdown -->
+              <div class="btn-group">
+                <button type="button" class="btn btn-success btn-sm dropdown-toggle" data-toggle="dropdown" data-offset="-52">
+                  <i class="fas fa-bars"></i>
+                </button>
+                <div class="dropdown-menu" role="menu">
+                  <a href="#" class="dropdown-item">Add new event</a>
+                  <a href="#" class="dropdown-item">Clear events</a>
+                  <div class="dropdown-divider"></div>
+                  <a href="#" class="dropdown-item">View calendar</a>
+                </div>
+              </div>
+              <button type="button" class="btn btn-success btn-sm" data-card-widget="collapse">
+                <i class="fas fa-minus"></i>
+              </button>
+              <button type="button" class="btn btn-success btn-sm" data-card-widget="remove">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+            <!-- /. tools -->
+          </div>
+          <!-- /.card-header -->
+          <div class="card-body pt-0">
+            <!--The calendar -->
+            <div id="calendar" style="width: 100%">
+
+            </div>
+          </div>
+          <!-- /.card-body -->
+        </div>
+        <!-- /.card -->
+      </section>
+      <!-- right col -->
+    </div>
+    <!-- /.row (main row) -->
+  </div>
+  <!-- /.container-fluid -->
+</section>
+
+@{ Html.RenderPartial("PartialLayout/_Scripts"); }
+
+<script>
+  $(document).ready(function () {
+    // Make the dashboard widgets sortable Using jquery UI
+    $('.connectedSortable').sortable({
+      placeholder: 'sort-highlight',
+      connectWith: '.connectedSortable',
+      handle: '.card-header, .nav-tabs',
+      forcePlaceholderSize: true,
+      zIndex: 999999
+    })
+
+    $('.connectedSortable .card-header').css('cursor', 'move')
+
+    /* jQueryKnob */
+    $('.knob').knob()
+
+    // The Calender
+    $('#calendar').datetimepicker({
+      format: 'L',
+      inline: true
+    })
+
+    /* Chart.js Charts */
+    // Donut Chart
+    var pieChartCanvas = $('#sales-chart-canvas').get(0).getContext('2d')
+    var pieData = {
+      labels: [
+        'Empty rooms',
+        'Check in',
+      ],
+      datasets: [{
+          data: [Math.round(@statisticsInfo[2] / @totalRoom * 100), Math.round(@statisticsInfo[3] / @totalRoom * 100)],
+          backgroundColor: ['#f56954', '#f39c12']
+      }]
+    }
+      var pieOptions = {
+        legend: {
+          display: true
+        },
+        maintainAspectRatio: true,
+        responsive: true
+      }
+              // Create pie or douhnut chart
+      // You can switch between pie and douhnut using the method below.
+      // eslint-disable-next-line no-unused-vars
+      var pieChart = new Chart(pieChartCanvas, { // lgtm[js/unused-local-variable]
+        type: 'doughnut',
+        data: pieData,
+        options: pieOptions
+      })                              
+
+// Sales graph chart
+var salesGraphChartCanvas = $('#line-chart').get(0).getContext('2d')
+// $('#revenue-chart').get(0).getContext('2d');
+
+    var roomNames = [];
+    var roomRates = [];
+
+    @foreach (Phong phong in phongs)
+    {
+      @:roomNames.push("@phong.tenPhong")
+      @:roomRates.push(@phong.danhGia)
+    }
+
+    var salesGraphChartData = {
+      labels: roomNames,
+      datasets: [
+        {
+          label: 'Room rates',
+          fill: false,
+          borderWidth: 2,
+          lineTension: 0,
+          spanGaps: true,
+          borderColor: '#efefef',
+          pointRadius: 3,
+          pointHoverRadius: 7,
+          pointColor: '#efefef',
+          pointBackgroundColor: '#efefef',
+          data: roomRates
+          },
+      ]
+    }
+
+    var salesGraphChartOptions = {
+      maintainAspectRatio: false,
+      responsive: true,
+      legend: {
+        display: false
+      },
+      scales: {
+        xAxes: [{
+          ticks: {
+            fontColor: '#efefef'
+          },
+          gridLines: {
+            display: false,
+            color: '#efefef',
+            drawBorder: false
+          }
+        }],
+        yAxes: [{
+          ticks: {
+            stepSize: 1,
+            fontColor: '#efefef'
+          },
+          gridLines: {
+            display: true,
+            color: '#efefef',
+            drawBorder: false
+          }
+        }]
+      }
+    }
+
+  // This will get the first returned node in the jQuery collection.
+  // eslint-disable-next-line no-unused-vars
+  var salesGraphChart = new Chart(salesGraphChartCanvas, { // lgtm[js/unused-local-variable]
+    type: 'line',
+    data: salesGraphChartData,
+    options: salesGraphChartOptions
+  })
+
+  })
+
+  console.log(@listPercent[0])
+
+</script>
+
+
+

@@ -1,0 +1,20 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width" />
+  <title>_CustomerLayout</title>
+
+  @{ Html.RenderPartial("PartialLayout/_Styles"); }
+</head>
+<body class="hold-transition login-page">
+  @RenderBody()
+
+  @{ Html.RenderPartial("PartialLayout/_Scripts"); }
+</body>
+</html>

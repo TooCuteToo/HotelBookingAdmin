@@ -1,0 +1,483 @@
+﻿@using HotelBookingAdmin.Models
+@{
+  ViewBag.Title = "Index";
+  Layout = "~/Views/Shared/MainLayout/_Layout.cshtml";
+  int totalRoom = ViewBag.TotalRoom;
+  List<int> statisticsInfo = (List<int>)ViewBag.StatisticsInfo;
+  List<Phong> phongs = (List<Phong>)ViewBag.Phongs;
+  List<double> listPercent = (List<double>)ViewBag.RatePercents;
+  NhanVien loginUser = (NhanVien)Session["NhanVien"];
+}
+
+@{ Html.RenderPartial("PartialLayout/_PageHeader", "Room"); }
+
+<section class="content">
+  <div class="container-fluid">
+    <!-- Main row -->
+    <div class="row">
+      <!-- Left col -->
+      <section class="col-lg-5 connectedSortable ui-sortable">
+        <!-- Custom tabs (Charts with tabs)-->
+        <div class="card">
+          <div class="card-header ui-sortable-handle" style="cursor: move;">
+            <h3 class="card-title">
+              <i class="fas fa-chart-pie mr-1"></i>
+              Check in
+            </h3>
+            <div class="card-tools">
+              <ul class="nav nav-pills ml-auto">
+                <li class="nav-item">
+                  <a class="nav-link active" href="#sales-chart" data-toggle="tab">Donut</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <!-- /.card-header -->
+          <div class="card-body">
+            <div class="tab-content p-0">
+              <!-- Morris chart - Sales -->
+              <div class="chart tab-pane active" id="sales-chart" style="position: relative; height: 300px">
+                <canvas id="sales-chart-canvas" height="0" style="height: 0px; display: block; width: 0px;" width="0" class="chartjs-render-monitor"></canvas>
+              </div>
+            </div>
+          </div>
+          <!-- /.card-body -->
+        </div>
+        <!-- /.card -->
+      </section>
+      <!-- /.Left col -->
+      <!-- right col (We are only adding the ID to make the widgets sortable)-->
+      <section class="col-lg-7 connectedSortable ui-sortable">
+        <div class="card bg-gradient-info">
+          <div class="card-header border-0">
+            <h3 class="card-title">
+              <i class="fas fa-th mr-1"></i>
+              Room's price
+            </h3>
+
+            <div class="card-tools">
+              <button type="button"
+                      class="btn bg-info btn-sm"
+                      data-card-widget="collapse">
+                <i class="fas fa-minus"></i>
+              </button>
+              <button type="button"
+                      class="btn bg-info btn-sm"
+                      data-card-widget="remove">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </div>
+          <div class="card-body">
+            <canvas class="chart"
+                    id="line-chart"
+                    style="
+                        min-height: 250px;
+                        height: 250px;
+                        max-height: 250px;
+                        max-width: 100%;
+                      "></canvas>
+          </div>
+          <!-- /.card-body -->
+        </div>
+      </section>
+      <!-- right col -->
+    </div>
+
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Room Datatable</h3>
+          </div>
+          <!-- /.card-header -->
+          <div class="card-body">
+            <table id="example1" class="table table-bordered table-striped">
+              <thead>
+                <tr>
+                  <th class="d-none">Img</th>
+                  <th>Room name</th>
+                  <th>Status</th>
+                  <th>Room type</th>
+                  <th>Price($)</th>
+                  <th>Discount($)</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                @foreach (Phong phong in phongs)
+                {
+                  <tr id="@phong.tenPhong">
+                    <td class="d-none">@phong.hinhAnh</td>
+                    <td>@phong.tenPhong</td>
+                    <td>@phong.tinhTrang</td>
+                    <td>@phong.maLoai</td>
+                    <td>@string.Format("{0:#.00}", phong.giaPhong)</td>
+
+                    @if (phong.giamGia != null)
+                    {
+                      <td>@string.Format("{0:#.00}", phong.giamGia)</td>
+                    } else
+                    {
+                      <td></td>
+                    }
+
+                    <td class="text-right">
+                      <a class="btn btn-primary btn-sm" href="#" data-toggle="modal" data-target="#modal-default">
+                        <i class="fas fa-folder">
+                        </i>
+                        View
+                      </a>
+
+                      @if (loginUser.MaCV == "admin")
+                      {
+                        <a class="btn btn-info btn-sm" href="#" data-toggle="modal" data-target="#modal-edit">
+                          <i class="fas fa-pencil-alt">
+                          </i>
+                          Edit
+                        </a>
+                      }
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+          <!-- /.card-body -->
+        </div>
+        <!-- /.card -->
+      </div>
+      <!-- /.col -->
+    </div>
+    <!-- /.row (main row) -->
+  </div>
+  <!-- /.container-fluid -->
+</section>
+
+@{ Html.RenderPartial("PartialLayout/_ViewRoom"); }
+@{ Html.RenderPartial("PartialLayout/_EditRoom"); }
+
+@{ Html.RenderPartial("PartialLayout/_Scripts"); }
+
+<!-- DataTables  & Plugins -->
+<script src="~/Assets/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="~/Assets/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="~/Assets/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+<script src="~/Assets/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+<script src="~/Assets/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+<script src="~/Assets/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+<script src="~/Assets/plugins/jszip/jszip.min.js"></script>
+<script src="~/Assets/plugins/pdfmake/pdfmake.min.js"></script>
+<script src="~/Assets/plugins/pdfmake/vfs_fonts.js"></script>
+<script src="~/Assets/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+<script src="~/Assets/plugins/datatables-buttons/js/buttons.print.min.js"></script>
+<script src="~/Assets/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+
+<script>
+  $(document).ready(function () {
+    // Make the dashboard widgets sortable Using jquery UI
+    $('.connectedSortable').sortable({
+      placeholder: 'sort-highlight',
+      connectWith: '.connectedSortable',
+      handle: '.card-header, .nav-tabs',
+      forcePlaceholderSize: true,
+      zIndex: 999999
+    })
+
+    $('.connectedSortable .card-header').css('cursor', 'move')
+
+    /* jQueryKnob */
+    $('.knob').knob()
+
+    // The Calender
+    $('#calendar').datetimepicker({
+      format: 'L',
+      inline: true
+    })
+
+    /* Chart.js Charts */
+    // Donut Chart
+    var pieChartCanvas = $('#sales-chart-canvas').get(0).getContext('2d')
+    var pieData = {
+      labels: [
+        'Empty rooms',
+        'Occupied rooms',
+      ],
+      datasets: [{
+        data: [Math.round(@statisticsInfo[2] / @totalRoom * 100), Math.round(@statisticsInfo[3] / @totalRoom * 100)],
+          backgroundColor: ['#f56954', '#f39c12']
+      }]
+    }
+      var pieOptions = {
+        legend: {
+          display: true
+        },
+        maintainAspectRatio: true,
+        responsive: true
+      }
+              // Create pie or douhnut chart
+      // You can switch between pie and douhnut using the method below.
+      // eslint-disable-next-line no-unused-vars
+      var pieChart = new Chart(pieChartCanvas, { // lgtm[js/unused-local-variable]
+        type: 'doughnut',
+        data: pieData,
+        options: pieOptions
+      })
+
+  // Sales graph chart
+  var salesGraphChartCanvas = $('#line-chart').get(0).getContext('2d')
+// $('#revenue-chart').get(0).getContext('2d');
+
+    const roomNames = [];
+    const roomPrice = [];
+
+    @foreach (Phong phong in phongs)
+    {
+      @:roomNames.push("@phong.tenPhong")
+      @:roomPrice.push(formatCurrency("@phong.giaPhong" - "@phong.giamGia"))
+    }
+
+    var salesGraphChartData = {
+      labels: roomNames,
+      datasets: [
+        {
+          label: "Room's price",
+          fill: true,
+          borderWidth: 2,
+          lineTension: 0,
+          spanGaps: true,
+          borderColor: '#efefef',
+          pointRadius: 3,
+          pointHoverRadius: 7,
+          pointColor: '#efefef',
+          pointBackgroundColor: '#efefef',
+          data: roomPrice
+          },
+      ]
+    }
+
+    var salesGraphChartOptions = {
+      maintainAspectRatio: false,
+      responsive: true,
+      legend: {
+        display: false
+      },
+      scales: {
+        xAxes: [{
+          ticks: {
+            fontColor: '#efefef'
+          },
+          gridLines: {
+            display: false,
+            color: '#efefef',
+            drawBorder: false
+          }
+        }],
+        yAxes: [{
+          ticks: {
+            stepSize: 35,
+            fontColor: '#efefef'
+          },
+          gridLines: {
+            display: true,
+            color: '#efefef',
+            drawBorder: false
+          }
+        }]
+      }
+    }
+
+  // This will get the first returned node in the jQuery collection.
+  // eslint-disable-next-line no-unused-vars
+  var salesGraphChart = new Chart(salesGraphChartCanvas, { // lgtm[js/unused-local-variable]
+    type: 'line',
+    data: salesGraphChartData,
+    options: salesGraphChartOptions
+    })
+
+    $("#example1").DataTable({
+      "responsive": true, "lengthChange": false, "autoWidth": false,
+      "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+    $('#example2').DataTable({
+      "paging": true,
+      "lengthChange": false,
+      "searching": false,
+      "ordering": true,
+      "info": true,
+      "autoWidth": false,
+      "responsive": true,
+    });
+
+    let row = null;
+    let cols = null;
+
+    $("#example1").click(function (e) {
+      if (e.target.classList.contains("btn-primary")) {
+        row = $(e.target).parents("tr");
+        cols = row.children("td");
+
+        fillInput(cols);
+        return;
+      }
+
+      if (e.target.classList.contains("btn-info")) {
+        row = $(e.target).parents("tr");
+        cols = row.children("td");
+
+        fillEdit(cols);
+
+        if ($(".btn-success").data("clicked")) {
+          cols[1].innerText = $("#modal-edit-name-text").val();
+          cols[2].innerText = $("#modal-edit-status-text").val();
+          cols[3].innerText = $("#modal-edit-type-text").val();
+          cols[4].innerText = $("#modal-edit-price-text").val();
+          cols[5].innerText = $("#modal-edit-discount-text").val();
+        }
+
+        return;
+      }
+    })
+
+    $("#modal-edit-submit").click(function (e) {
+      const phong = {
+        tenPhong: $("#modal-edit-name-text").val(),
+        tinhTrang: $("#modal-edit-status-text").val(),
+        maLoai: $("#modal-edit-type-text").val(),
+        giaPhong: $("#modal-edit-price-text").val(),
+        giamGia: $("#modal-edit-discount-text").val()
+      }
+
+      updateTable();
+      submitData(e, phong);
+    });
+
+    function updateTable() {
+      cols[1].innerText = $("#modal-edit-name-text").val();
+      cols[2].innerText = $("#modal-edit-status-text").val();
+      cols[3].innerText = $("#modal-edit-type-text").val();
+      cols[4].innerText = $("#modal-edit-price-text").val();
+
+      $("#modal-edit-discount-text").prop("max", cols[4].innerText - 10);
+      cols[5].innerText = $("#modal-edit-discount-text").val();
+    }
+
+    function fillInput(cols) {
+      $("#modal-img").prop("src", "/Assets/img/" + cols[0].innerText)
+      $("#modal-name-text").val(cols[1].innerText)
+      $("#modal-status-text").val(cols[2].innerText)
+      $("#modal-type-text").val(cols[3].innerText)
+      $("#modal-price-text").val(cols[4].innerText)
+      $("#modal-discount-text").val(cols[5].innerText)
+    }
+
+    function fillEdit(cols) {
+      $("#modal-edit-img").prop("src", "/Assets/img/" + cols[0].innerText)
+      $("#modal-edit-name-text").val(cols[1].innerText)
+      $("#modal-edit-status-text").val(cols[2].innerText)
+      $("#modal-edit-type-text").val(cols[3].innerText.toLowerCase())
+      $("#modal-edit-price-text").val(cols[4].innerText)
+      $("#modal-edit-discount-text").val(cols[5].innerText)
+    }
+
+    function submitData(e, phong) {
+      $.ajax({
+        url: '/Room/UpdateRoom',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(phong)
+      }).done(function (result) {
+        const phongs = result.phongs;
+        const roomNames = [];
+        const roomPrice = [];
+
+        for (let phong of phongs) {
+          roomNames.push(phong.tenPhong);
+          const giamGia = phong.giamGia ? phong.giamGia : 0;
+          roomPrice.push(formatCurrency(phong.giaPhong - giamGia));
+        }
+
+        updateLineChart(roomNames, roomPrice);
+        clearInput();
+      })
+    }
+
+    function updateLineChart(roomNames, roomPrice) {
+      const salesGraphChartData = {
+        labels: roomNames,
+        datasets: [
+          {
+            label: "Room's price",
+            fill: true,
+            borderWidth: 2,
+            lineTension: 0,
+            spanGaps: true,
+            borderColor: '#efefef',
+            pointRadius: 3,
+            pointHoverRadius: 7,
+            pointColor: '#efefef',
+            pointBackgroundColor: '#efefef',
+            data: roomPrice
+          },
+        ]
+      }
+
+      salesGraphChart.data = salesGraphChartData;
+      salesGraphChart.update();
+    }
+
+    function clearInput() {
+      $("#modal-edit-name-text").val(""),
+        $("#modal-edit-status-text").val(""),
+        $("#modal-edit-type-text").val(""),
+        $("#modal-edit-price-text").val(""),
+        $("#modal-edit-discount-text").val("")
+    }
+
+    $("#modal-edit-price-text").keyup(function (e) {
+      const val = $(e.currentTarget).val();
+      if (val < 0) {
+        $(e.currentTarget).val(0);
+        return false;
+      }
+
+      if (val > 300) {
+        $(e.currentTarget).val(300);
+        return false;
+      }
+      
+    })
+
+    $("#modal-edit-price-text").change(function (e) {
+      const val = $(e.currentTarget).val();
+
+      if (val <= 20) {
+        $("#modal-edit-discount-text").val("");
+        return false;
+      }
+
+      $("#modal-edit-discount-text").val(formatCurrency(val - 20));
+    })
+
+    $("#modal-edit-discount-text").keyup(function (e) {
+      const val = Number.parseFloat($(e.currentTarget).val());
+      if (val <= 0) {
+        $(e.currentTarget).val("");
+        return false;
+      }
+
+      const priceVal = Number.parseFloat($("#modal-edit-price-text").val());
+
+      if (val >= priceVal) {
+        $(e.currentTarget).val(formatCurrency(priceVal - 20));
+        return false;
+      }
+    })
+
+    function formatCurrency(number) {
+      return (Math.round(number * 100) / 100).toFixed(2)
+    }
+
+  })
+
+</script>
