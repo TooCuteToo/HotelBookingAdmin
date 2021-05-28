@@ -2161,6 +2161,11 @@
     <Content Include="Views\Order\Index.cshtml" />
     <Content Include="Views\Shared\PartialLayout\_ViewOrder.cshtml" />
     <Content Include="Views\Shared\PartialLayout\_EditOrder.cshtml" />
+    <Content Include="Views\Customer\Customer.cshtml" />
+    <Content Include="Views\Shared\PartialLayout\_EditCustomer.cshtml" />
+    <Content Include="Views\Shared\PartialLayout\_ViewCustomer.cshtml" />
+    <Content Include="Views\Shared\PartialLayout\_AddCustomer.cshtml" />
+    <Content Include="Views\Shared\PartialLayout\_AddOrder.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

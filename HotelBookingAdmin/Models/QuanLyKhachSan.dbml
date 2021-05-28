@@ -9,51 +9,54 @@
   </Table>
   <Table Name="dbo.Phong" Member="Phongs">
     <Type Name="Phong">
-      <Column Name="tenPhong" Type="System.String" DbType="VarChar(30) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="maPhong" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="tenPhong" Type="System.String" DbType="VarChar(30) NOT NULL" CanBeNull="false" />
       <Column Name="tinhTrang" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
       <Column Name="maLoai" Type="System.String" DbType="VarChar(10) NOT NULL" CanBeNull="false" />
       <Column Name="hinhAnh" Type="System.String" DbType="VarChar(30) NOT NULL" CanBeNull="false" />
       <Column Name="giaPhong" Type="System.Decimal" DbType="Money" CanBeNull="true" />
       <Column Name="giamGia" Type="System.Decimal" DbType="Money" CanBeNull="true" />
       <Column Name="danhGia" Type="System.Double" DbType="Float" CanBeNull="true" />
-      <Association Name="Phong_HoaDon" Member="HoaDons" ThisKey="tenPhong" OtherKey="tenPhong" Type="HoaDon" />
+      <Association Name="Phong_HoaDon" Member="HoaDons" ThisKey="maPhong" OtherKey="maPhong" Type="HoaDon" />
       <Association Name="LoaiPhong_Phong" Member="LoaiPhong" ThisKey="maLoai" OtherKey="maLoai" Type="LoaiPhong" IsForeignKey="true" />
     </Type>
   </Table>
   <Table Name="dbo.HoaDon" Member="HoaDons">
     <Type Name="HoaDon">
       <Column Name="maHD" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="email" Type="System.String" DbType="VarChar(30) NOT NULL" CanBeNull="false" />
-      <Column Name="tenPhong" Type="System.String" DbType="VarChar(30) NOT NULL" CanBeNull="false" />
+      <Column Name="maKH" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="maNV" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="email" Type="System.String" DbType="VarChar(30)" CanBeNull="true" />
+      <Column Name="tenPhong" Type="System.String" DbType="VarChar(30)" CanBeNull="true" />
+      <Column Name="maPhong" Type="System.Int32" DbType="Int" CanBeNull="true" />
       <Column Name="ngayDat" Type="System.DateTime" DbType="Date" CanBeNull="true" />
       <Column Name="ngayTra" Type="System.DateTime" DbType="Date" CanBeNull="true" />
+      <Column Name="tinhTrang" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
       <Column Name="tienThanhToan" Type="System.Decimal" DbType="Money" CanBeNull="true" />
-      <Association Name="Phong_HoaDon" Member="Phong" ThisKey="tenPhong" OtherKey="tenPhong" Type="Phong" IsForeignKey="true" />
+      <Association Name="Phong_HoaDon" Member="Phong" ThisKey="maPhong" OtherKey="maPhong" Type="Phong" IsForeignKey="true" />
       <Association Name="KhachHang_HoaDon" Member="KhachHang" ThisKey="email" OtherKey="email" Type="KhachHang" IsForeignKey="true" />
+      <Association Name="KhachHang_HoaDon1" Member="KhachHang1" ThisKey="maKH" OtherKey="maKH" Type="KhachHang" IsForeignKey="true" />
+      <Association Name="NhanVien_HoaDon" Member="NhanVien" ThisKey="maNV" OtherKey="MaNV" Type="NhanVien" IsForeignKey="true" />
     </Type>
   </Table>
   <Table Name="dbo.KhachHang" Member="KhachHangs">
     <Type Name="KhachHang">
-      <Column Name="email" Type="System.String" DbType="VarChar(30) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="maKH" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="email" Type="System.String" DbType="VarChar(30)" CanBeNull="true" />
       <Column Name="tenKH" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
       <Column Name="gioiTinh" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
+      <Column Name="ngaySinh" Type="System.DateTime" DbType="Date" CanBeNull="true" />
+      <Column Name="diaChi" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
+      <Column Name="sdt" Type="System.String" DbType="NVarChar(10)" CanBeNull="true" />
       <Column Name="pass" Type="System.String" DbType="NVarChar(10)" CanBeNull="true" />
       <Association Name="KhachHang_HoaDon" Member="HoaDons" ThisKey="email" OtherKey="email" Type="HoaDon" />
-      <Association Name="KhachHang_KhachHangDanhGia" Member="KhachHangDanhGia" ThisKey="email" OtherKey="email" Type="KhachHangDanhGia" Cardinality="One" />
-    </Type>
-  </Table>
-  <Table Name="dbo.KhachHangDanhGia" Member="KhachHangDanhGias">
-    <Type Name="KhachHangDanhGia">
-      <Column Name="email" Type="System.String" DbType="VarChar(30) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="tenKH" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
-      <Column Name="danhGia" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
-      <Association Name="KhachHang_KhachHangDanhGia" Member="KhachHang" ThisKey="email" OtherKey="email" Type="KhachHang" IsForeignKey="true" />
+      <Association Name="KhachHang_HoaDon1" Member="HoaDons1" ThisKey="maKH" OtherKey="maKH" Type="HoaDon" />
     </Type>
   </Table>
   <Table Name="dbo.LoaiPhong" Member="LoaiPhongs">
     <Type Name="LoaiPhong">
       <Column Name="maLoai" Type="System.String" DbType="VarChar(10) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="tenLP" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
+      <Column Name="tenlp" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
       <Association Name="LoaiPhong_Phong" Member="Phongs" ThisKey="maLoai" OtherKey="maLoai" Type="Phong" />
     </Type>
   </Table>
@@ -61,13 +64,14 @@
     <Type Name="NhanVien">
       <Column Name="MaNV" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="TenNV" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
-      <Column Name="Email" Type="System.String" DbType="VarChar(30) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Email" Type="System.String" DbType="VarChar(30)" CanBeNull="true" />
       <Column Name="Password" Type="System.String" DbType="VarChar(30)" CanBeNull="true" />
       <Column Name="MaCV" Type="System.String" DbType="VarChar(10)" CanBeNull="true" />
       <Column Name="DiaChi_NV" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
       <Column Name="SDT_NV" Type="System.String" DbType="VarChar(10)" CanBeNull="true" />
       <Column Name="GioiTinh" Type="System.String" DbType="NVarChar(10)" CanBeNull="true" />
       <Column Name="NgaySinh" Type="System.DateTime" DbType="Date" CanBeNull="true" />
+      <Association Name="NhanVien_HoaDon" Member="HoaDons" ThisKey="MaNV" OtherKey="maNV" Type="HoaDon" />
       <Association Name="ChucVu_NhanVien" Member="ChucVu" ThisKey="MaCV" OtherKey="MaCV" Type="ChucVu" IsForeignKey="true" />
     </Type>
   </Table>

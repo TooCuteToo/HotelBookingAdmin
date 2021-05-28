@@ -10,6 +10,8 @@ namespace HotelBookingAdmin.Controllers
 {
   public class CustomerController : Controller
   {
+
+    #region Login/Register/Profile
     // GET: Customer
     public ActionResult Index()
     {
@@ -17,7 +19,7 @@ namespace HotelBookingAdmin.Controllers
     }
 
     [HttpPost]
-    public ActionResult Index(FormCollection fc)
+    public JsonResult Index(FormCollection fc)
     {
       string email = fc["email"];
       string password = fc["password"];
@@ -26,10 +28,10 @@ namespace HotelBookingAdmin.Controllers
       if (nv != null)
       {
         Session["NhanVien"] = nv;
-        return RedirectToAction("Index", "Home");
+        return Json(new { message = "success" });
       }
 
-      return RedirectToAction("Index", "Customer");
+      return Json(new { message = "fail"});
     }
 
     public ActionResult Register()
@@ -38,7 +40,7 @@ namespace HotelBookingAdmin.Controllers
     }
 
     [HttpPost]
-    public ActionResult Register(FormCollection fc)
+    public JsonResult Register(FormCollection fc)
     {
       string fullName = fc["fullName"];
       string phoneNumber = fc["phoneNumber"];
@@ -47,12 +49,12 @@ namespace HotelBookingAdmin.Controllers
 
       NhanVien nv = DBHelper.createEmployee(fullName, phoneNumber, dob, email);
 
-      if (nv != null)
+      if (nv != null && nv.TenNV != null)
       {
-        return RedirectToAction("Index", "Customer");
+        return Json(new { message = "Success!!!" });
       }
 
-      return RedirectToAction("Register", "Customer");
+      return Json(new { message = email + " is already existed" });
     }
   
     public ActionResult PasswordRecovery()
@@ -85,6 +87,10 @@ namespace HotelBookingAdmin.Controllers
       return View();
     }
 
+    #endregion
+
+    #region Employee
+
     [HttpGet]
     public ActionResult Employee()
     {
@@ -93,25 +99,156 @@ namespace HotelBookingAdmin.Controllers
     }
 
     [HttpPost]
-    public JsonResult Employee(string email)
+    public JsonResult Employee(int maNV)
     {
-      DBHelper.deleteEmployee(email);
-      return Json(new { message = "success" });
+      string message = DBHelper.deleteEmployee(maNV);
+      return Json(new { message });
     }
 
     [HttpPost]
     public JsonResult UpdateEmployee(NhanVien nv)
     {
-      DBHelper.updateEmployee(nv);
+      NhanVien result = DBHelper.updateEmployee(nv);
       NhanVien loginNv = (NhanVien)Session["NhanVien"];
 
-      if (nv.Email == loginNv.Email)
+      if (nv.MaNV == loginNv.MaNV)
       {
         Session["NhanVien"] = nv;
         return Json(new { loginNv = nv });
       }
 
-      return Json(new { message = "successs" });
+      return Json(new { nhanVien = result });
     }
+
+    #endregion
+
+    #region Customer
+
+    [HttpGet]
+    public ActionResult Customer()
+    {
+      List<KhachHang> customers = DBHelper.getCustomers();
+      ViewBag.KhachHangs = customers;
+      ViewBag.Males = customers.Where(item => item.gioiTinh == "Male").ToList();
+      ViewBag.Females = customers.Where(item => item.gioiTinh == "Female").ToList();
+
+      List<HoaDon> hoaDons = DBHelper.getHoaDons();
+      List<string> listEmail = new List<string>();
+
+      float bookingCount = 0;
+
+      foreach (HoaDon hd in hoaDons)
+      {
+        foreach (KhachHang kh in customers)
+        {
+          if (kh.email == hd.email && !listEmail.Contains(hd.email))
+          {
+            bookingCount++;
+            listEmail.Add(kh.email);
+            continue;
+          }
+        }
+      }
+
+      ViewBag.Booking = bookingCount;
+      ViewBag.NotYet = customers.Count - bookingCount;
+      return View();
+    }
+
+    [HttpPost]
+    public JsonResult UpdateCustomer(KhachHang updatedKH)
+    {
+      KhachHang kh = DBHelper.UpdateCustomer(updatedKH);
+
+      List<KhachHang> customers = DBHelper.getCustomers();
+      float males = customers.Where(item => item.gioiTinh == "Male").ToList().Count;
+      float females = customers.Where(item => item.gioiTinh == "Female").ToList().Count;
+
+      List<HoaDon> hoaDons = DBHelper.getHoaDons();
+      List<string> listEmail = new List<string>();
+
+      float bookingCount = 0;
+
+      foreach (HoaDon hd in hoaDons)
+      {
+        foreach (KhachHang item in customers)
+        {
+          if (item.email == hd.email && !listEmail.Contains(hd.email))
+          {
+            bookingCount++;
+            listEmail.Add(item.email);
+            continue;
+          }
+        }
+      }
+
+      float notYet = customers.Count - bookingCount;
+
+      return Json(new { khachHang = kh,  males, females, bookingCount, notYet, customers = customers.Count });
+    }
+
+    [HttpPost]
+    public JsonResult DeleteCustomer(KhachHang deletedKH)
+    {
+      string message = DBHelper.deleteCustomer(deletedKH);
+      List<KhachHang> customers = DBHelper.getCustomers();
+      float males = customers.Where(item => item.gioiTinh == "Male").ToList().Count;
+      float females = customers.Where(item => item.gioiTinh == "Female").ToList().Count;
+
+      List<HoaDon> hoaDons = DBHelper.getHoaDons();
+      List<string> listEmail = new List<string>();
+
+      float bookingCount = 0;
+
+      foreach (HoaDon hd in hoaDons)
+      {
+        foreach (KhachHang item in customers)
+        {
+          if (item.email == hd.email && !listEmail.Contains(hd.email))
+          {
+            bookingCount++;
+            listEmail.Add(item.email);
+            continue;
+          }
+        }
+      }
+
+      float notYet = customers.Count - bookingCount;
+
+      return Json(new { message, males, females, bookingCount, notYet, customers = customers.Count });
+    }
+
+    [HttpPost]
+    public JsonResult CreateCustomer(KhachHang newCustomer)
+    {
+      KhachHang kh = DBHelper.createCustomer(newCustomer);
+      List<KhachHang> customers = DBHelper.getCustomers();
+      float males = customers.Where(item => item.gioiTinh == "Male").ToList().Count;
+      float females = customers.Where(item => item.gioiTinh == "Female").ToList().Count;
+
+      List<HoaDon> hoaDons = DBHelper.getHoaDons();
+      List<string> listEmail = new List<string>();
+
+      float bookingCount = 0;
+
+      foreach (HoaDon hd in hoaDons)
+      {
+        foreach (KhachHang item in customers)
+        {
+          if (item.email == hd.email && !listEmail.Contains(hd.email))
+          {
+            bookingCount++;
+            listEmail.Add(item.email);
+            continue;
+          }
+        }
+      }
+
+      float notYet = customers.Count - bookingCount;
+
+      return Json(new { kh, males, females, bookingCount, notYet, customers = customers.Count });
+    }
+
+    #endregion
   }
 }

@@ -1,4 +1,4 @@
-﻿@using HotelBookingAdmin.Models
+﻿
 @{
   ViewBag.Title = "_EditEmployee";
 }
@@ -7,7 +7,7 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h4 class="modal-title">Employee Information</h4>
+        <h4 class="modal-title">Customer Information</h4>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">×</span>
         </button>
@@ -17,31 +17,21 @@
           <div class="form-group row">
             <label for="modal-edit-code-text" class="col-sm-3 col-form-label">No.</label>
             <div class="col-sm-9">
-              <input type="text" class="form-control" id="modal-edit-code-text" disabled/>
+              <input type="text" class="form-control" id="modal-edit-code-text" placeholder="CODE" disabled/>
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <label for="modal-edit-email-text" class="col-sm-3 col-form-label">Email</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" id="modal-edit-email-text" placeholder="Email" />
             </div>
           </div>
 
           <div class="form-group row">
             <label for="modal-edit-name-text" class="col-sm-3 col-form-label">Fullname</label>
             <div class="col-sm-9">
-              <input type="text" class="form-control" id="modal-edit-name-text" />
-            </div>
-          </div>
-
-          @*<div class="form-group row">
-      <label for="modal-edit-role-text" class="col-sm-3 col-form-label">Role</label>
-      <div class="col-sm-9">
-        <input type="text" class="form-control" id="modal-edit-role-text" />
-      </div>
-    </div>*@
-
-          <div class="form-group row">
-            <label for="modal-edit-role-text" class="col-sm-3 col-form-label">Role</label>
-            <div class="col-sm-9">
-              <select id="modal-edit-role-text" class="form-control">
-                <option value="admin">Admin</option>
-                <option value="employee">Employee</option>
-              </select>
+              <input type="text" class="form-control" id="modal-edit-name-text" placeholder="Fullname" />
             </div>
           </div>
 
@@ -55,21 +45,7 @@
           <div class="form-group row">
             <label for="modal-edit-dob-text" class="col-sm-3 col-form-label">DOB</label>
             <div class="col-sm-9">
-              <input type="date" class="form-control" id="modal-edit-dob-text" value="2000-1-12" min="@DateTime.Now.AddYears(-25).ToString("yyyy-MM-dd")" max="@DateTime.Now.AddYears(-18).ToString("yyyy-MM-dd")" />
-            </div>
-          </div>
-
-          <div class="form-group row">
-            <label for="modal-edit-email-text" class="col-sm-3 col-form-label">Email</label>
-            <div class="col-sm-9">
-              <input type="text" class="form-control" id="modal-edit-email-text" />
-            </div>
-          </div>
-
-          <div class="form-group row">
-            <label for="modal-edit-phone-text" class="col-sm-3 col-form-label">Phone number</label>
-            <div class="col-sm-9">
-              <input type="text" class="form-control" id="modal-edit-phone-text" maxlength="10"/>
+              <input type="date" class="form-control" id="modal-edit-dob-text" value="2000-1-12" min="@DateTime.Now.AddYears(-100).ToString("yyyy-MM-dd")" max="@DateTime.Now.AddYears(-18).ToString("yyyy-MM-dd")" />
             </div>
           </div>
 
@@ -81,9 +57,16 @@
           </div>
 
           <div class="form-group row">
+            <label for="modal-edit-phone-text" class="col-sm-3 col-form-label">Phone number</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" id="modal-edit-phone-text" placeholder="Phone number" maxlength="10" />
+            </div>
+          </div>
+
+          <div class="form-group row">
             <label for="modal-edit-password-text" class="col-sm-3 col-form-label">Password</label>
             <div class="col-sm-9">
-              <input type="password" class="form-control" id="modal-edit-password-text" placeholder="password" />
+              <input type="password" class="form-control" id="modal-edit-password-text" placeholder="Password" />
             </div>
           </div>
         </form>
@@ -96,3 +79,6 @@
   </div>
   <!-- /.modal-dialog -->
 </div>
+
+
+

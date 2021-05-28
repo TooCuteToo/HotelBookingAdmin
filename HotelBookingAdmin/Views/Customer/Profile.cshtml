@@ -172,14 +172,14 @@
                   <div class="form-group row">
                     <label for="inputExperience" class="col-sm-2 col-form-label">Email</label>
                     <div class="col-sm-10">
-                      <input type="email" class="form-control" id="inputEmail" placeholder="Email" value="@nv.Email" readonly/>
+                      <input type="email" class="form-control" id="inputEmail" placeholder="Email" value="@nv.Email" />
                     </div>
                   </div>
 
                   <div class="form-group row">
                     <label for="inputExperience" class="col-sm-2 col-form-label">Phone number</label>
                     <div class="col-sm-10">
-                      <input type="tel" class="form-control" id="inputPhone" placeholder="Phone number" value="@nv.SDT_NV" />
+                      <input type="tel" class="form-control" id="inputPhone" placeholder="Phone number" maxlength="11" value="@nv.SDT_NV" />
                     </div>
                   </div>
 
@@ -221,7 +221,34 @@
 <script>
   $(".btn-danger").click(function (e) {
     e.preventDefault();
-    nhanVien = {
+
+    const emailReg = validateEmail($("#inputEmail").val());
+    const phoneNumberReg = validatePhoneNumber($("#inputPhone").val());
+
+    if (!phoneNumberReg) {
+      $(document).Toasts('create', {
+        title: 'Fail',
+        autohide: true,
+        delay: 2000,
+        body: "Incorrect phone number format!!!",
+        class: "bg-danger"
+      })
+      return false;
+    }
+
+    if (!emailReg) {
+      $(document).Toasts('create', {
+        title: 'Fail',
+        autohide: true,
+        delay: 2000,
+        body: "Incorrect email format!!!",
+        class: "bg-danger"
+      })
+      return false;
+    }
+
+    const nhanVien = {
+      MaNV: @nv.MaNV,
       MaCV: "@nv.MaCV",
       TenNV: $("#inputName").val(),
       GioiTinh: $("#inputGender").prop("checked") ? "Female" : "Male",
@@ -243,8 +270,14 @@
   })
 
   function updateProfile(loginNv) {
-    console.log(loginNv);
-    console.log($(".profile-address"))
+    $(document).Toasts('create', {
+      title: 'Success',
+      autohide: true,
+      delay: 2000,
+      body: "Your profile is successfully updated!!!",
+      class: "bg-success"
+    })
+
     $(".profile-username").text(loginNv.TenNV);
     $(".profile-role").text(loginNv.MaCV.toUpperCase());
 
@@ -266,5 +299,28 @@
     return [month, day, year].join("/");
   }
 
+  function validatePhoneNumber(str) {
+    const regex = /(09|01[2|6|8|9])+([0-9]{8})\b/g;
+    return regex.exec(str);
+  }
+
+  function validateEmail(str) {
+    const regex = /^(([^<>()[\]\\.,;:\s@@"]+(\.[^<>()[\]\\.,;:\s@@"]+)*)|(".+"))@@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return regex.exec(str);
+  }
+
+
+  $("#inputPhone").keypress(function (e) {
+    if (!isNumber(e)) return false;
+  })
+
+  function isNumber(evt) {
+    evt = (evt) ? evt : window.event;
+    var charCode = (evt.which) ? evt.which : evt.keyCode;
+    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+      return false;
+    }
+    return true;
+  }
 </script>
 

@@ -40,7 +40,7 @@
           <div class="icon">
             <i class="ion ion-stats-bars"></i>
           </div>
-          <a href="@Url.Action("Index", "Customer")" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+          <a href="@Url.Action("Customer", "Customer")" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
         </div>
       </div>
       <!-- ./col -->
@@ -138,66 +138,7 @@
                   <i class="fas fa-trash-o"></i>
                 </div>
               </li>
-              <li class="done">
-                <span class="handle ui-sortable-handle">
-                  <i class="fas fa-ellipsis-v"></i>
-                  <i class="fas fa-ellipsis-v"></i>
-                </span>
-                <div class="icheck-primary d-inline ml-2">
-                  <input type="checkbox" value="" name="todo2" id="todoCheck2" checked="">
-                  <label for="todoCheck2"></label>
-                </div>
-                <span class="text">Make the theme responsive</span>
-                <div class="tools">
-                  <i class="fas fa-edit"></i>
-                  <i class="fas fa-trash-o"></i>
-                </div>
-              </li>
-              <li>
-                <span class="handle ui-sortable-handle">
-                  <i class="fas fa-ellipsis-v"></i>
-                  <i class="fas fa-ellipsis-v"></i>
-                </span>
-                <div class="icheck-primary d-inline ml-2">
-                  <input type="checkbox" value="" name="todo3" id="todoCheck3">
-                  <label for="todoCheck3"></label>
-                </div>
-                <span class="text">Let theme shine like a star</span>
-                <div class="tools">
-                  <i class="fas fa-edit"></i>
-                  <i class="fas fa-trash-o"></i>
-                </div>
-              </li>
-              <li>
-                <span class="handle ui-sortable-handle">
-                  <i class="fas fa-ellipsis-v"></i>
-                  <i class="fas fa-ellipsis-v"></i>
-                </span>
-                <div class="icheck-primary d-inline ml-2">
-                  <input type="checkbox" value="" name="todo4" id="todoCheck4">
-                  <label for="todoCheck4"></label>
-                </div>
-                <span class="text">Let theme shine like a star</span>
-                <div class="tools">
-                  <i class="fas fa-edit"></i>
-                  <i class="fas fa-trash-o"></i>
-                </div>
-              </li>
-              <li>
-                <span class="handle ui-sortable-handle">
-                  <i class="fas fa-ellipsis-v"></i>
-                  <i class="fas fa-ellipsis-v"></i>
-                </span>
-                <div class="icheck-primary d-inline ml-2">
-                  <input type="checkbox" value="" name="todo5" id="todoCheck5">
-                  <label for="todoCheck5"></label>
-                </div>
-                <span class="text">Check your messages and notifications</span>
-                <div class="tools">
-                  <i class="fas fa-edit"></i>
-                  <i class="fas fa-trash-o"></i>
-                </div>
-              </li>
+              
               <li>
                 <span class="handle ui-sortable-handle">
                   <i class="fas fa-ellipsis-v"></i>
@@ -213,72 +154,12 @@
                   <i class="fas fa-trash-o"></i>
                 </div>
               </li>
-
-              <li>
-                <!-- drag handle -->
-                <span class="handle ui-sortable-handle">
-                  <i class="fas fa-ellipsis-v"></i>
-                  <i class="fas fa-ellipsis-v"></i>
-                </span>
-                <!-- checkbox -->
-                <div class="icheck-primary d-inline ml-2">
-                  <input type="checkbox" value="" name="todo1" id="todoCheck1">
-                  <label for="todoCheck1"></label>
-                </div>
-                <!-- todo text -->
-                <span class="text">Design a nice theme</span>
-                <!-- General tools such as edit or delete-->
-                <div class="tools">
-                  <i class="fas fa-edit"></i>
-                  <i class="fas fa-trash-o"></i>
-                </div>
-              </li>
-
-              <li>
-                <!-- drag handle -->
-                <span class="handle ui-sortable-handle">
-                  <i class="fas fa-ellipsis-v"></i>
-                  <i class="fas fa-ellipsis-v"></i>
-                </span>
-                <!-- checkbox -->
-                <div class="icheck-primary d-inline ml-2">
-                  <input type="checkbox" value="" name="todo1" id="todoCheck1">
-                  <label for="todoCheck1"></label>
-                </div>
-                <!-- todo text -->
-                <span class="text">Design a nice theme</span>
-                <!-- General tools such as edit or delete-->
-                <div class="tools">
-                  <i class="fas fa-edit"></i>
-                  <i class="fas fa-trash-o"></i>
-                </div>
-              </li>
-
-              <li>
-                <!-- drag handle -->
-                <span class="handle ui-sortable-handle">
-                  <i class="fas fa-ellipsis-v"></i>
-                  <i class="fas fa-ellipsis-v"></i>
-                </span>
-                <!-- checkbox -->
-                <div class="icheck-primary d-inline ml-2">
-                  <input type="checkbox" value="" name="todo1" id="todoCheck1">
-                  <label for="todoCheck1"></label>
-                </div>
-                <!-- todo text -->
-                <span class="text">Design a nice theme</span>
-                <!-- General tools such as edit or delete-->
-                <div class="tools">
-                  <i class="fas fa-edit"></i>
-                  <i class="fas fa-trash-o"></i>
-                </div>
-              </li>
-
             </ul>
           </div>
           <!-- /.card-body -->
           <div class="card-footer clearfix">
-            <button type="button" class="btn btn-primary float-right">
+            <input type="text" class="w-75" name="todo-input"/>
+            <button type="button" class="btn btn-primary float-right" id="todo-add-btn">
               <i class="fas fa-plus"></i> Add item
             </button>
           </div>
@@ -423,6 +304,14 @@
       zIndex: 999999
     })
 
+    // jQuery UI sortable for the todo list
+    $('.todo-list').sortable({
+      placeholder: 'sort-highlight',
+      handle: '.handle',
+      forcePlaceholderSize: true,
+      zIndex: 999999
+    })
+
     $('.connectedSortable .card-header').css('cursor', 'move')
 
     /* jQueryKnob */
@@ -440,7 +329,7 @@
     var pieData = {
       labels: [
         'Empty rooms',
-        'Check in',
+        'Occupied rooms',
       ],
       datasets: [{
           data: [Math.round(@statisticsInfo[2] / @totalRoom * 100), Math.round(@statisticsInfo[3] / @totalRoom * 100)],
@@ -532,11 +421,85 @@ var salesGraphChartCanvas = $('#line-chart').get(0).getContext('2d')
     type: 'line',
     data: salesGraphChartData,
     options: salesGraphChartOptions
-  })
+    })
+
+
+    $("#todo-add-btn").click(function (e) {
+      const newTodo = $("[name=todo-input]").val();
+
+      if (!newTodo) return false;
+
+      const todoContainer = $("[data-widget=todo-list]").children("li");
+      const todoList = [];
+
+      for (let item of todoContainer) {
+        const temp = item.querySelector(".text");
+
+        if (temp.textContent === newTodo) {
+          alert("This todo is already in the list!!!");
+          return false;
+        }
+
+        todoList.push(item.outerHTML);
+      }
+
+      const todoItem = `
+        <li class="">
+                <span class="handle">
+                  <i class="fas fa-ellipsis-v"></i>
+                  <i class="fas fa-ellipsis-v"></i>
+                </span>
+                <div class="icheck-primary d-inline ml-2">
+                  <input type="checkbox" value="" name="${newTodo}" id="${newTodo}">
+                  <label for="${newTodo}"></label>
+                </div>
+                <span class="text">${newTodo}</span>
+                <div class="tools">
+                  <i class="fas fa-edit"></i>
+                  <i class="fas fa-trash-o"></i>
+                </div>
+              </li>
+        `
+
+      todoList.push(todoItem);
+
+      $("[data-widget=todo-list]").html(todoList);
+    });
+
+    $(".todo-list").click(function (e) {
+      console.log(e.target.classList)
+      if (e.target.classList.contains("fa-edit")) {
+        const edit = prompt("Enter your todo content", "");
+
+        if (!edit) return false;
+
+        const todoContainer = $("[data-widget=todo-list]").children("li");
+
+        for (let item of todoContainer) {
+          const temp = item.querySelector(".text");
+
+          if (temp.textContent === edit) {
+            alert("This todo is already in the list!!!");
+            return false;
+          }
+        }
+
+        const todoItem = e.target.parentElement.parentElement;
+        const todoInput = todoItem.querySelector("input");
+        const todoLabel = todoItem.querySelector("label");
+        const span = todoItem.querySelector(".text");
+
+        todoInput.value = edit;
+        todoInput.setAttribute("name", edit);
+        todoInput.setAttribute("id", edit);
+
+        todoLabel.setAttribute("for", edit);
+        span.textContent = edit;
+      }
+    })
 
   })
 
-  console.log(@listPercent[0])
 
 </script>
 

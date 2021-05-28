@@ -5,6 +5,8 @@
   Layout = "~/Views/Shared/MainLayout/_Layout.cshtml";
   List<HoaDon> hoaDons = (List<HoaDon>)ViewBag.HoaDons;
   List<KhachHang> khachHangs = (List<KhachHang>)ViewBag.KhachHangs;
+  List<Phong> phongTrongs = (List<Phong>)ViewBag.PhongTrongs;
+  List<NhanVien> nhanViens = (List<NhanVien>)ViewBag.NhanViens;
   NhanVien loginUser = (NhanVien)Session["NhanVien"];
 }
 
@@ -92,8 +94,10 @@
               <thead>
                 <tr>
                   <th>No. </th>
+                  <th>Employee No.</th>
                   <th>Email</th>
                   <th>Room name</th>
+                  <th>Status</th>
                   <th>Booking date</th>
                   <th>Check-out date</th>
                   <th>Total money($)</th>
@@ -105,8 +109,19 @@
                 {
                   <tr id="@hd.maHD">
                     <td>@hd.maHD</td>
+                    <td>@hd.maNV</td>
                     <td>@hd.email</td>
                     <td>@hd.tenPhong</td>
+
+                    @if (hd.tinhTrang == true)
+                    {
+                      <td>paid</td>
+                    }
+                    else
+                    {
+                      <td>unpaid</td>
+                    }
+
                     <td>
                       <input type="date" name="booking-date" value="@hd.ngayDat.Value.ToString("yyyy-MM-dd")" disabled />
                     </td>
@@ -115,7 +130,13 @@
                     </td>
                     <td>@string.Format("{0:#.00}", hd.tienThanhToan)</td>
 
-                    <td class="text-right">
+                    <td class="text-center w-25">
+                      <a class="btn btn-warning btn-sm" href="#" data-toggle="modal" data-target="#modal-add">
+                        <i class="fas fa-plus">
+                        </i>
+                        Add
+                      </a>
+
                       <a class="btn btn-primary btn-sm" href="#" data-toggle="modal" data-target="#modal-default">
                         <i class="fas fa-folder">
                         </i>
@@ -154,7 +175,8 @@
 </section>
 
 @{ Html.RenderPartial("PartialLayout/_ViewOrder"); }
-@{ Html.RenderPartial("PartialLayout/_EditOrder", khachHangs); }
+@{ Html.RenderPartial("PartialLayout/_EditOrder", khachHangs, new ViewDataDictionary { { "khachHangs", khachHangs }, { "phongTrongs", phongTrongs }, { "nhanViens", nhanViens } }); }
+@{ Html.RenderPartial("PartialLayout/_AddOrder", khachHangs, new ViewDataDictionary { { "khachHangs", khachHangs }, { "phongTrongs", phongTrongs }, { "nhanViens", nhanViens } }); }
 
 @{ Html.RenderPartial("PartialLayout/_Scripts"); }
 
@@ -172,6 +194,7 @@
 <script src="~/Assets/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
 <script src="~/Assets/plugins/datatables-buttons/js/buttons.print.min.js"></script>
 <script src="~/Assets/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+<script src="~/Assets/plugins/toastr/toastr.min.js"></script>
 
 <script>
   $(document).ready(function () {
@@ -326,14 +349,23 @@ var salesGraphChartCanvas = $('#line-chart').get(0).getContext('2d')
       fillEdit(cols);
       return;
     }
+
+    if (e.target.classList.contains("btn-danger")) {
+      deleteOrder(e);
+    }
   });
 
   $("#edit-submit-btn").on("click", (e) => {
     const hoaDon = {
       maHD: $("#modal-edit-no-text").val(),
+      maNV: $("#modal-edit-employee-no-text").val(),
+
       email: $("#modal-edit-email-text").val(),
 
       tenPhong: $("#modal-edit-name-text").val(),
+
+      tinhTrang: $("#modal-edit-status-text").val() === "paid",
+
       ngayDat: $("#modal-edit-booking-date-text").val(),
       ngayTra: $("#modal-edit-checkout-date-text").val(),
 
@@ -351,7 +383,7 @@ var salesGraphChartCanvas = $('#line-chart').get(0).getContext('2d')
       contentType: 'application/json',
       data: JSON.stringify(hoaDon)
     }).done(function (res) {
-      updateTable(res);
+      updateTable(res.result);
       clearInput();
 
       const checkoutDate = [];
@@ -371,43 +403,82 @@ var salesGraphChartCanvas = $('#line-chart').get(0).getContext('2d')
         checkoutDate.push(totalDays);
       }
 
+      $(document).Toasts('create', {
+        title: 'Success',
+        autohide: true,
+        delay: 2000,
+        body: "Update successful",
+        class: "bg-success"
+      })
+
+      initEmptyRoom(res.phongTrongs);
+
       updateBarChart(roomNames, totalMoneys);
       updateLineChart(roomNames, checkoutDate);
     })
   }
 
-  function updateTable(res) {
-    cols[0].innerText = $("#modal-edit-no-text").val();
-    cols[1].innerText = $("#modal-edit-email-text").val();
-    cols[2].innerText = $("#modal-edit-name-text").val();
+    function updateTable(res) {
+      console.log(res)
+      cols[0].innerText = res.maHD;
+      cols[1].innerText = res.maNV;
+      cols[2].innerText = res.email;
+      cols[3].innerText = res.tenPhong;
+      cols[4].innerText = res.tinhTrang ? "paid" : "unpaid";
 
-    $(cols[3]).children().val($("#modal-edit-booking-date-text").val());
-    $(cols[4]).children().val($("#modal-edit-checkout-date-text").val());
+      const ngayDat = new Date(parseInt(res.ngayDat.substr(6)));
+      const ngayTra = new Date(parseInt(res.ngayTra.substr(6)));
+
+      $(cols[5]).children().val(formatDate(ngayDat));
+      $(cols[6]).children().val(formatDate(ngayTra));
 
     const formatter = new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD'
     });
 
-    cols[5].innerText = formatter.format(res.result.tienThanhToan).substring(1);
-  }
+    cols[7].innerText = formatter.format(res.tienThanhToan).substring(1);
+    }
+
+    function formatDate(date) {
+      var d = new Date(date),
+        month = '' + (d.getMonth() + 1),
+        day = '' + d.getDate(),
+        year = d.getFullYear();
+
+      if (month.length < 2)
+        month = '0' + month;
+      if (day.length < 2)
+        day = '0' + day;
+
+      return [year, month, day].join('-');
+    }
 
   function fillInput(cols) {
     $("#modal-no-text").val(cols[0].innerText);
-    $("#modal-email-text").val(cols[1].innerText);
-    $("#modal-name-text").val(cols[2].innerText);
-    $("#modal-booking-date-text").val($(cols[3]).children().val());
-    $("#modal-checkout-date-text").val($(cols[4]).children().val());
-    $("#modal-total-money-text").val(cols[5].innerText);
+    $("#modal-employee-no-text").val(cols[1].innerText);
+    $("#modal-email-text").val(cols[2].innerText);
+    $("#modal-name-text").val(cols[3].innerText);
+    $("#modal-status-text").val(cols[4].innerText);
+    $("#modal-booking-date-text").val($(cols[5]).children().val());
+    $("#modal-checkout-date-text").val($(cols[6]).children().val());
+    $("#modal-total-money-text").val(cols[7].innerText);
     }
 
   function fillEdit(cols) {
     $("#modal-edit-no-text").val(cols[0].innerText);
-    $("#modal-edit-email-text").val(cols[1].innerText);
-    $("#modal-edit-name-text").val(cols[2].innerText);
-    $("#modal-edit-booking-date-text").val($(cols[3]).children().val());
+    $("#modal-edit-employee-no-text").val(cols[1].innerText);
+    $("#modal-edit-email-text").val(cols[2].innerText);
 
-    const checkoutDateVal = new Date($(cols[3]).children().val());
+    $("#modal-edit-name-text").append(`
+        <option value="${cols[3].innerText}">${cols[3].innerText}</option>
+    `);
+
+    $("#modal-edit-name-text").val(cols[3].innerText);
+    $("#modal-edit-status-text").val(cols[4].innerText);
+    $("#modal-edit-booking-date-text").val($(cols[5]).children().val());
+
+    const checkoutDateVal = new Date($(cols[5]).children().val());
     const checkoutDateMin = new Date(checkoutDateVal.setDate(checkoutDateVal.getDate() + 1));
     const month = (checkoutDateMin.getUTCMonth() + 1).toString().padStart(2, '0'); //months from 1-12
     const day = checkoutDateMin.getUTCDate().toString().padStart(2, "0");
@@ -416,17 +487,19 @@ var salesGraphChartCanvas = $('#line-chart').get(0).getContext('2d')
     const newdate = year + "-" + month + "-" + day;
 
     $("#modal-edit-checkout-date-text").prop("min", newdate);
-    $("#modal-edit-checkout-date-text").val($(cols[4]).children().val());
-    $("#modal-edit-total-money-text").val(cols[5].innerText);
+    $("#modal-edit-checkout-date-text").val($(cols[6]).children().val());
+    $("#modal-edit-total-money-text").val(cols[7].innerText);
   }
 
   function clearInput() {
     $("#modal-no-text").val("");
-    $("#modal-email-text").val(cols[1].innerText);
-    $("#modal-name-text").val(cols[2].innerText);
-    $("#modal-booking-date-text").val($(cols[3]).children().val());
-    $("#modal-checkout-date-text").val($(cols[4]).children().val());
-    $("#modal-total-money-text").val(cols[5].innerText);
+    $("#modal-employee-no-text").val("");
+    $("#modal-email-text").val("");
+    $("#modal-name-text").val("");
+    $("#modal-status-text").val("");
+    $("#modal-booking-date-text").val("");
+    $("#modal-checkout-date-text").val("");
+    $("#modal-total-money-text").val("");
   }
 
   function updateBarChart(roomNames, totalMoneys) {
@@ -435,8 +508,8 @@ var salesGraphChartCanvas = $('#line-chart').get(0).getContext('2d')
       datasets: [
         {
           label: 'Total money',
-          backgroundColor: 'rgba(60,141,188,0.9)',
-          borderColor: 'rgba(60,141,188,0.8)',
+          backgroundColor: '#2ecc71',
+          borderColor: '#2ecc71',
           pointRadius: false,
           pointColor: '#3b8bba',
           pointStrokeColor: 'rgba(60,141,188,1)',
@@ -475,8 +548,14 @@ var salesGraphChartCanvas = $('#line-chart').get(0).getContext('2d')
     lineChart.update();
     }
 
-    $(".btn-danger").click(function (e) {
-      const row = $(e.currentTarget).parents("tr");
+    function deleteOrder(e) {
+      const answer = confirm("Are you sure ?");
+
+      if (!answer) {
+        return false;
+      }
+
+      const row = $(e.target).parents("tr");
       const cols = row.children("td");
 
       $.ajax({
@@ -502,12 +581,22 @@ var salesGraphChartCanvas = $('#line-chart').get(0).getContext('2d')
           checkoutDate.push(totalDays);
         }
 
+        initEmptyRoom(result.phongTrongs);
+
         updateBarChart(roomNames, totalMoneys);
         updateLineChart(roomNames, checkoutDate);
 
+        $(document).Toasts('create', {
+          title: 'Success',
+          autohide: true,
+          delay: 2000,
+          body: "Successful delete",
+          class: "bg-warning"
+        })
+
         row.remove();
       })
-    })
+    }
 
     $("#modal-edit-booking-date-text").change(function (e) {
       const checkoutDateVal = new Date($(e.currentTarget).val());
@@ -522,6 +611,117 @@ var salesGraphChartCanvas = $('#line-chart').get(0).getContext('2d')
       $("#modal-edit-checkout-date-text").val(newdate);
     })
 
+    $("#modal-add-booking-date-text").change(function (e) {
+      const checkoutDateVal = new Date($(e.currentTarget).val());
+      const checkoutDateMin = new Date(checkoutDateVal.setDate(checkoutDateVal.getDate() + 1));
+      const month = (checkoutDateMin.getUTCMonth() + 1).toString().padStart(2, '0'); //months from 1-12
+      const day = checkoutDateMin.getUTCDate().toString().padStart(2, "0");
+      const year = checkoutDateMin.getUTCFullYear();
+
+      const newdate = year + "-" + month + "-" + day;
+
+      $("#modal-add-checkout-date-text").prop("min", newdate);
+      $("#modal-add-checkout-date-text").val(newdate);
+    })
+
+    $("#modal-edit").on("hide.bs.modal", function (e) {
+      $("#modal-edit-name-text").children().last().remove();
+    });
+
+    $("#create-order-form").submit((e) => {
+      e.preventDefault();
+
+      const hoaDon = {
+        email: $("#modal-add-email-text").val(),
+        tenPhong: $("#modal-add-name-text").val(),
+        ngayDat: $("#modal-add-booking-date-text").val(),
+        ngayTra: $("#modal-add-checkout-date-text").val(),
+      }
+
+      console.log(hoaDon)
+
+      createOrder(e, hoaDon);
+
+    })
+
+    function createOrder(e, hoaDon) {
+      $.ajax({
+        url: '/Order/CreateOrder',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(hoaDon)
+      }).done(function (res) {
+        const checkoutDate = [];
+        const roomNames = [];
+        const totalMoneys = [];
+        const listHD = res.listHD;
+
+        for (let hd of listHD) {
+          roomNames.push(hd.tenPhong);
+          totalMoneys.push(hd.tienThanhToan)
+
+          const dt1 = new Date(parseInt(hd.ngayDat.substr(6)));
+          const dt2 = new Date(parseInt(hd.ngayTra.substr(6)));
+          const time = dt2.getTime() - dt1.getTime();
+          const totalDays = time / (1000 * 3600 * 24);
+
+          checkoutDate.push(totalDays);
+        }
+
+        $(document).Toasts('create', {
+          title: 'Success',
+          autohide: true,
+          delay: 2000,
+          body: "Update successful",
+          class: "bg-success"
+        })
+
+        console.log(res)
+
+        initEmptyRoom(res.phongTrongs);
+
+        $("#example1").append(addNewTableRow(res.result));
+
+        updateBarChart(roomNames, totalMoneys);
+        updateLineChart(roomNames, checkoutDate);
+      })
+    }
+
+    function addNewTableRow(hoaDon) {
+      const tdMaHD = `<td>${hoaDon.maHD}</td>`;
+      const tdMaNV = `<td>${hoaDon.maNV}</td>`;
+      const tdEmail = `<td>${hoaDon.email}</td>`;
+      const tdTenPhong = `<td>${hoaDon.tenPhong}</td>`;
+      const tdTinhTrang = `<td>${hoaDon.tinhTrang ? "paid" : "unpaid"}</td>`;
+
+      const bookingDate = new Date(parseInt(hoaDon.ngayDat.substr(6)));
+      const checkoutDate = new Date(parseInt(hoaDon.ngayTra.substr(6)));
+      const tdBookingDate = `<td><input type="date" name="booking-date" value="${formatDate(bookingDate)}" disabled /></td>`
+      const tdCheckoutDate = `<td><input type="date" name="checkout-date" value="${formatDate(checkoutDate)}" disabled /></td>`
+
+      const formatter = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD'
+      });
+
+      const tdTotalMoney = `<td>${formatter.format(hoaDon.tienThanhToan).substring(1)}</td>`;
+      
+      const addBtn = `<a class="btn btn-warning btn-sm" href="#" data-toggle="modal" data-target="#modal-add"><i class="fas fa-plus"></i>Add</a>`;
+      const viewBtn = `<a class="btn btn-primary btn-sm" href="#" data-toggle="modal" data-target="#modal-default"><i class="fas fa-folder"></i>View</a>`
+      const editBtn = `<a class="btn btn-info btn-sm" href="#" data-toggle="modal" data-target="#modal-edit"><i class="fas fa-pencil-alt"></i>Edit</a>`;
+      const deleteBtn = `<a class="btn btn-danger btn-sm" href="#"><i class="fas fa-trash"></i>Delete</a>`;
+
+      const tdButton = `<td class="text-center w-25">${addBtn} ${viewBtn} ${editBtn} ${deleteBtn}</td>`;
+      const tdRow = `<tr id="${hoaDon.maHD}">${tdMaHD} ${tdMaNV} ${tdEmail} ${tdTenPhong} ${tdTinhTrang} ${tdBookingDate} ${tdCheckoutDate} ${tdTotalMoney} ${tdButton}</tr>`;
+
+      return tdRow;
+    }
+
+    function initEmptyRoom(phongTrongs) {
+      const options = phongTrongs.map(item => `<option value="${item.tenPhong}">${item.tenPhong}</option>`);
+      $("#modal-add-name-text").html(options.join(""));
+      $("#modal-edit-name-text").html(options.join(""));
+    }
   })
 
 </script>

@@ -14,7 +14,9 @@ namespace HotelBookingAdmin.Controllers
     public ActionResult Index()
     {
       ViewBag.HoaDons = DBHelper.getHoaDons();
-      ViewBag.KhachHangs = DBHelper.getKhachHangs();
+      ViewBag.KhachHangs = DBHelper.getCustomers();
+      ViewBag.NhanViens = DBHelper.getEmployees();
+      ViewBag.PhongTrongs = DBHelper.getPhongs().Where(item => item.tinhTrang == "empty").ToList();
       return View();
     }
 
@@ -23,14 +25,24 @@ namespace HotelBookingAdmin.Controllers
     {
       HoaDon updatedHD = DBHelper.updateHoaDon(hd);
 
-      return Json(new { result = updatedHD, listHD = DBHelper.getHoaDons() });
+      return Json(new { result = updatedHD, listHD = DBHelper.getHoaDons(), phongTrongs = DBHelper.getPhongs().Where(item => item.tinhTrang == "empty").ToList() });
     }
 
     [HttpPost]
     public JsonResult DeleteOrder(int maHD)
     {
       DBHelper.deleteOrder(maHD);
-      return Json(new { listHD = DBHelper.getHoaDons() });
+      return Json(new { listHD = DBHelper.getHoaDons(), phongTrongs = DBHelper.getPhongs().Where(item => item.tinhTrang == "empty").ToList() });
+    }
+
+    [HttpPost]
+    public JsonResult CreateOrder(HoaDon newHD)
+    {
+      newHD.tinhTrang = false;
+      newHD.maNV = ((NhanVien)Session["NhanVien"]).MaNV;
+
+      HoaDon hd = DBHelper.createHoaDon(newHD);
+      return Json(new { result = hd, listHD = DBHelper.getHoaDons(), phongTrongs = DBHelper.getPhongs().Where(item => item.tinhTrang == "empty").ToList() });
     }
   }
 }

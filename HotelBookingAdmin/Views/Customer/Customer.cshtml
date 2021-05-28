@@ -1,0 +1,644 @@
+﻿@using HotelBookingAdmin.Models
+@{
+  ViewBag.Title = "Customer";
+  List<KhachHang> customers = (List<KhachHang>)ViewBag.KhachHangs;
+  List<KhachHang> males = (List<KhachHang>)ViewBag.Males;
+  List<KhachHang> females = (List<KhachHang>)ViewBag.Females;
+
+  float bookingCount = ViewBag.Booking;
+  float notYetCount = ViewBag.NotYet;
+  NhanVien loginUser = (NhanVien)Session["NhanVien"];
+  Layout = "~/Views/Shared/MainLayout/_Layout.cshtml";
+}
+
+@{ Html.RenderPartial("PartialLayout/_PageHeader", "Customer"); }
+
+<section class="content">
+  <div class="container-fluid">
+    <!-- Main row -->
+    <div class="row">
+      <!-- Left col -->
+      <section class="col-lg-6 connectedSortable ui-sortable">
+        <!-- Custom tabs (Charts with tabs)-->
+        <div class="card card-success">
+          <div class="card-header">
+            <h3 class="card-title">Gender</h3>
+
+            <div class="card-tools">
+              <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                <i class="fas fa-minus"></i>
+              </button>
+              <button type="button" class="btn btn-tool" data-card-widget="remove">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </div>
+          <div class="card-body" style="display: block;">
+            <div class="chart">
+              <div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
+              <canvas id="donutChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%; display: block; width: 572px;" width="715" height="312" class="chartjs-render-monitor"></canvas>
+            </div>
+          </div>
+          <!-- /.card-body -->
+        </div>
+        <!-- /.card -->
+      </section>
+      <!-- /.Left col -->
+      <section class="col-lg-6 connectedSortable ui-sortable">
+        <div class="card card-danger">
+          <div class="card-header">
+            <h3 class="card-title">Booking</h3>
+
+            <div class="card-tools">
+              <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                <i class="fas fa-minus"></i>
+              </button>
+              <button type="button" class="btn btn-tool" data-card-widget="remove">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
+            <canvas id="pieChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%; display: block; width: 572px;" width="715" height="312" class="chartjs-render-monitor"></canvas>
+          </div>
+          <!-- /.card-body -->
+        </div>
+      </section>
+    </div>
+
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Customer datatable</h3>
+          </div>
+          <!-- /.card-header -->
+          <div class="card-body">
+            <table id="example1" class="table table-bordered table-striped">
+              <thead>
+                <tr>
+                  <td>No.</td>
+                  <th>Email</th>
+                  <th>Name</th>
+                  <th>Gender</th>
+                  <th>DOB</th>
+                  <th>Address</th>
+                  <th>Phone number</th>
+                  <th>Pass</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                @foreach (KhachHang kh in customers)
+                {
+                  <tr id="@kh.email">
+                    <td>@kh.maKH</td>
+                    <td>@kh.email</td>
+                    <td>@kh.tenKH</td>
+
+                    @if (kh.gioiTinh == "Female")
+                    {
+                      <td class="text-center">
+                        <input type="checkbox" name="gender" value="Female" checked disabled />
+                      </td>
+                    }
+                    else
+                    {
+                      <td class="text-center">
+                        <input type="checkbox" name="gender" value="Female" disabled />
+                      </td>
+                    }
+
+                    @if (kh.ngaySinh == null)
+                    {
+                      <td>
+                        <input type="date" name="dob" value="@DateTime.Now.ToString("yyyy-MM-dd")" disabled />
+                      </td>
+                    }
+                    else
+                    {
+                      <td>
+                        <input type="date" name="dob" value="@kh.ngaySinh.Value.ToString("yyyy-MM-dd")" disabled />
+                      </td>
+                    }
+
+                    <td>@kh.diaChi</td>
+                    <td>@kh.sdt</td>
+
+                    <td>
+                      <input type="password" name="password" value="@kh.pass" disabled />
+                    </td>
+                    <td class="text-center w-25">
+                      <a class="btn btn-warning btn-sm" href="#" data-toggle="modal" data-target="#modal-add">
+                        <i class="fas fa-plus">
+                        </i>
+                        Add
+                      </a>
+
+                      <a class="btn btn-primary btn-sm" href="#" data-toggle="modal" data-target="#modal-default">
+                        <i class="fas fa-folder">
+                        </i>
+                        View
+                      </a>
+
+                      <a class="btn btn-info btn-sm" href="#" data-toggle="modal" data-target="#modal-edit">
+                        <i class="fas fa-pencil-alt">
+                        </i>
+                        Edit
+                      </a>
+
+                      @if (loginUser.MaCV == "admin")
+                      {
+                        <a class="btn btn-danger btn-sm" href="#">
+                          <i class="fas fa-trash">
+                          </i>
+                          Delete
+                        </a>
+                      }
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+          <!-- /.card-body -->
+        </div>
+        <!-- /.card -->
+      </div>
+      <!-- /.col -->
+    </div>
+
+
+    <!-- /.row (main row) -->
+  </div>
+  <!-- /.container-fluid -->
+</section>
+
+@{ Html.RenderPartial("PartialLayout/_Scripts"); }
+@{ Html.RenderPartial("PartialLayout/_ViewCustomer"); }
+@{ Html.RenderPartial("PartialLayout/_EditCustomer"); }
+@{ Html.RenderPartial("PartialLayout/_AddCustomer"); }
+
+<script src="~/Assets/plugins/toastr/toastr.min.js"></script>
+
+<!-- DataTables  & Plugins -->
+<script src="~/Assets/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="~/Assets/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="~/Assets/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+<script src="~/Assets/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+<script src="~/Assets/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+<script src="~/Assets/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+<script src="~/Assets/plugins/jszip/jszip.min.js"></script>
+<script src="~/Assets/plugins/pdfmake/pdfmake.min.js"></script>
+<script src="~/Assets/plugins/pdfmake/vfs_fonts.js"></script>
+<script src="~/Assets/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+<script src="~/Assets/plugins/datatables-buttons/js/buttons.print.min.js"></script>
+<script src="~/Assets/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+
+<script>
+  $(document).ready(function () {
+    // Make the dashboard widgets sortable Using jquery UI
+    $('.connectedSortable').sortable({
+      placeholder: 'sort-highlight',
+      connectWith: '.connectedSortable',
+      handle: '.card-header, .nav-tabs',
+      forcePlaceholderSize: true,
+      zIndex: 999999
+    });
+
+    $('.connectedSortable .card-header').css('cursor', 'move');
+
+    /* Chart.js Charts */
+    // Donut Chart
+    var donutChartCanvas = $('#donutChart').get(0).getContext('2d');
+    var donutData = {
+      labels: [
+        'Female',
+        'Male'
+      ],
+      datasets: [{
+        data: [Math.round(@females.Count / @customers.Count * 100), Math.round(@males.Count / @customers.Count * 100)],
+        backgroundColor: ['#079992', '#78e08f']
+      }]
+    };
+
+    var donutOptions = {
+      legend: {
+        display: true
+      },
+      maintainAspectRatio: true,
+      responsive: true
+    };
+              // Create pie or douhnut chart
+              // You can switch between pie and douhnut using the method below.
+              // eslint-disable-next-line no-unused-vars
+    var donutChart = new Chart(donutChartCanvas, {
+      type: 'doughnut',
+      data: donutData,
+      options: donutOptions
+    });
+
+    var pieChartCanvas = $('#pieChart').get(0).getContext('2d');
+     var pieData = {
+      labels: [
+        'Not yet',
+        'Booked',
+      ],
+      datasets: [{
+        data: [Math.round(@notYetCount / @customers.Count * 100), Math.round(@bookingCount / @customers.Count * 100)],
+        backgroundColor: ['#ff793f', '#ff5252']
+      }]
+    };
+
+    console.log(@notYetCount, @bookingCount)
+
+    var pieOptions = {
+      legend: {
+        display: true
+      },
+      maintainAspectRatio: true,
+      responsive: true
+    };
+
+    var pieChart = new Chart(pieChartCanvas, {
+      type: 'pie',
+      data: pieData,
+      options: pieOptions
+    });
+
+    $("#example1").DataTable({
+      "responsive": true, "lengthChange": false, "autoWidth": false,
+      "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+    $('#example2').DataTable({
+      "paging": true,
+      "lengthChange": false,
+      "searching": false,
+      "ordering": true,
+      "info": true,
+      "autoWidth": false,
+      "responsive": true,
+    });
+
+    let row = null;
+    let cols = null;
+
+    $("#example1").click(function (e) {
+      if (e.target.classList.contains("btn-primary")) {
+        row = $(e.target).parents("tr");
+        cols = row.children("td");
+
+        fillInput(cols);
+        return;
+      }
+
+      if (e.target.classList.contains("btn-info")) {
+        row = $(e.target).parents("tr");
+        cols = row.children("td");
+
+        fillEdit(cols);
+        return;
+      }
+
+      if (e.target.classList.contains("btn-danger")) {
+        removeCustomer(e);
+      }
+
+    });
+
+    $("#edit-submit-btn").on("click", (e) => {
+      const phoneReg = validatePhoneNumber($("#modal-edit-phone-text").val());
+      const emailReg = validateEmail($("#modal-edit-email-text").val());
+
+      if (!phoneReg) {
+        $(document).Toasts('create', {
+          title: 'Fail',
+          autohide: true,
+          delay: 2000,
+          body: "Incorrect phone number format!!!",
+          class: "bg-danger"
+        })
+        return false;
+      }
+
+      if (!emailReg) {
+        $(document).Toasts('create', {
+          title: 'Fail',
+          autohide: true,
+          delay: 2000,
+          body: "Incorrect email format!!!",
+          class: "bg-danger"
+        })
+        return false;
+      }
+
+      const khachHang = {
+        maKH: $("#modal-edit-code-text").val(),
+        email: $("#modal-edit-email-text").val(),
+        tenKH: $("#modal-edit-name-text").val(),
+        gioiTinh: $("#modal-edit-gender-text").prop("checked") ? "Female" : "Male",
+        ngaySinh: $("#modal-edit-dob-text").val(),
+        diaChi: $("#modal-edit-address-text").val(),
+        sdt: $("#modal-edit-phone-text").val(),
+        pass: $("#modal-edit-password-text").val()
+      }
+
+      submitData(e, khachHang);
+    })
+
+    function submitData(e, khachHang) {
+      $.ajax({
+        url: '/Customer/UpdateCustomer',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(khachHang)
+      }).done(function (result) {
+        console.log(result);
+
+        if (!result.khachHang.tenKH) {
+          $(document).Toasts('create', {
+            title: 'Error',
+            autohide: true,
+            delay: 2000,
+            body: "Violation of foreign key",
+            class: "bg-danger"
+          })
+
+          return false;
+        }
+
+        $(document).Toasts('create', {
+          title: 'Success',
+          autohide: true,
+          delay: 2000,
+          body: "Successfully updated",
+          class: "bg-success"
+        })
+
+        console.log(result);
+
+        updateDonutChart(result.females, result.males, result.customers);
+
+        updateTable();
+        clearInput();
+      })
+    }
+
+    function validatePhoneNumber(str) {
+      const regex = /(09|01[2|6|8|9])+([0-9]{8})\b/g;
+      return regex.exec(str);
+    }
+
+    function validateEmail(str) {
+      const regex = /^(([^<>()[\]\\.,;:\s@@"]+(\.[^<>()[\]\\.,;:\s@@"]+)*)|(".+"))@@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      return regex.exec(str);
+    }
+
+    function updateTable() {
+      cols[1].innerText = $("#modal-edit-email-text").val();
+      cols[2].innerText = $("#modal-edit-name-text").val();
+
+      $(cols[3]).children().prop("checked", $("#modal-edit-gender-text").prop("checked"));
+      $(cols[4]).children().val($("#modal-edit-dob-text").val());
+
+      cols[5].innerText = $("#modal-edit-address-text").val();
+      cols[6].innerText = $("#modal-edit-phone-text").val();
+
+      $(cols[7]).children().val($("#modal-edit-password-text").val());
+    }
+
+    function fillInput(cols) {
+      const genderCheck = $(cols[3]).children().prop("checked");
+
+      $("#modal-code-text").val(cols[0].innerText);
+      $("#modal-email-text").val(cols[1].innerText);
+      $("#modal-name-text").val(cols[2].innerText);
+      $("#modal-gender-text").prop("checked", genderCheck);
+      $("#modal-dob-text").val($(cols[4]).children().val());
+      $("#modal-address-text").val(cols[5].innerText);
+      $("#modal-phone-text").val(cols[6].innerText);
+      $("#modal-password-text").val($(cols[7]).children().val());
+    }
+
+    function fillEdit(cols) {
+      const genderCheck = $(cols[3]).children().prop("checked");
+
+      $("#modal-edit-code-text").val(cols[0].innerText);
+      $("#modal-edit-email-text").val(cols[1].innerText);
+      $("#modal-edit-name-text").val(cols[2].innerText);
+      $("#modal-edit-gender-text").prop("checked", genderCheck);
+      $("#modal-edit-dob-text").val($(cols[4]).children().val());
+      $("#modal-edit-address-text").val(cols[5].innerText);
+      $("#modal-edit-phone-text").val(cols[6].innerText);
+      $("#modal-edit-password-text").val($(cols[7]).children().val());
+    }
+
+    $("#modal-edit-phone-text").keypress(function (e) {
+      if (!isNumber(e)) return false;
+    })
+
+    $("#modal-add-phone-text").keypress(function (e) {
+      if (!isNumber(e)) return false;
+    })
+
+    function isNumber(evt) {
+      evt = (evt) ? evt : window.event;
+      var charCode = (evt.which) ? evt.which : evt.keyCode;
+      if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+        return false;
+      }
+      return true;
+    }
+
+    function clearInput() {
+      $("#modal-edit-email-text").val("");
+      $("#modal-edit-name-text").val("");
+      $("#modal-edit-gender-text").prop("checked", false);
+      $("#modal-edit-password-text").val("");
+    }
+
+    function removeCustomer(e) {
+      const answer = confirm("Are you sure ?");
+
+      if (!answer) {
+        return false;
+      }
+
+      const row = $(e.target).parents("tr");
+      const cols = row.children("td");
+
+      $.ajax({
+        url: "/Customer/DeleteCustomer",
+        type: "POST",
+        dataType: "json",
+        data: { maKH: cols[0].innerText }
+      }).done(function (result) {
+        if (!result.message) {
+          $(document).Toasts('create', {
+            title: 'Error',
+            autohide: true,
+            delay: 2000,
+            body: "Violation of foreign key",
+            class: "bg-danger"
+          })
+
+          return false;
+        }
+
+        $(document).Toasts('create', {
+          title: 'Success',
+          autohide: true,
+          delay: 2000,
+          body: "Successful deleted",
+          class: "bg-warning"
+        })
+
+        updateDonutChart(result.females, result.males, result.customers);
+
+        row.remove();
+      })
+    }
+
+    $("#create-customer-form").on("submit", (e) => {
+      e.preventDefault();
+      const phoneReg = validatePhoneNumber($("#modal-add-phone-text").val());
+      const emailReg = validateEmail($("#modal-add-email-text").val());
+
+      if (!phoneReg) {
+        $(document).Toasts('create', {
+          title: 'Fail',
+          autohide: true,
+          delay: 2000,
+          body: "Incorrect phone number format!!!",
+          class: "bg-danger"
+        })
+        return false;
+      }
+
+      if (!emailReg) {
+        $(document).Toasts('create', {
+          title: 'Fail',
+          autohide: true,
+          delay: 2000,
+          body: "Incorrect email format!!!",
+          class: "bg-danger"
+        })
+        return false;
+      }
+
+      const khachHang = {
+        email: $("#modal-add-email-text").val(),
+        tenKH: $("#modal-add-name-text").val(),
+        gioiTinh: $("#modal-add-gender-text").prop("checked") ? "Female" : "Male",
+        ngaySinh: $("#modal-add-dob-text").val(),
+        diaChi: $("#modal-add-address-text").val(),
+        sdt: $("#modal-add-phone-text").val(),
+        pass: $("#modal-add-password-text").val()
+      }
+
+      createCustomer(khachHang);
+    })
+
+    function createCustomer(khachHang) {
+      $.ajax({
+        url: '/Customer/CreateCustomer',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(khachHang)
+      }).done(function (result) {
+        console.log(result);
+
+        if (!result.kh.tenKH) {
+          $(document).Toasts('create', {
+            title: 'Error',
+            autohide: true,
+            delay: 2000,
+            body: "Violation of foreign key",
+            class: "bg-danger"
+          })
+
+          return false;
+        }
+
+        $(document).Toasts('create', {
+          title: 'Success',
+          autohide: true,
+          delay: 2000,
+          body: "Successfully created",
+          class: "bg-success"
+        })
+
+        console.log(result);
+
+        updateDonutChart(result.females, result.males, result.customers);
+        $("#example1").append(addNewTableRow(result.kh));
+        clearAddInput();
+      })
+    }
+
+    function addNewTableRow(khachHang) {
+      const tdMaKh = `<td>${khachHang.maKH}</td>`;
+      const tdEmail = `<td>${khachHang.email}</td>`;
+      const tdTenKH = `<td>${khachHang.tenKH}</td>`;
+      const tdDiaChi = `<td>${khachHang.diaChi}</td>`;
+      const tdSDT = `<td>${khachHang.sdt}</td>`;
+      const tdPassword = `<td><input type="password" name="password" value="${khachHang.pass}" disabled /></td>`;
+      const tdGioiTinh = `<td class="text-center"><input type="checkbox" name="gender" value="Female" ${khachHang.gioiTinh === "Female" ? "checked" : null} disabled /></td>`;
+      const ngaySinh = new Date(parseInt(khachHang.ngaySinh.substr(6)));
+      const tdNgaySinh = `<td><input type="date" name="dob" value="${formatDate(ngaySinh)}" disabled /></td>`
+      const addBtn = `<a class="btn btn-warning btn-sm" href="#" data-toggle="modal" data-target="#modal-add"><i class="fas fa-plus"></i>Add</a>`;
+      const viewBtn = `<a class="btn btn-primary btn-sm" href="#" data-toggle="modal" data-target="#modal-default"><i class="fas fa-folder"></i>View</a>`
+      const editBtn = `<a class="btn btn-info btn-sm" href="#" data-toggle="modal" data-target="#modal-edit"><i class="fas fa-pencil-alt"></i>Edit</a>`;
+      const deleteBtn = `<a class="btn btn-danger btn-sm" href="#"><i class="fas fa-trash"></i>Delete</a>`;
+
+      const tdButton = `<td class="text-center w-25">${addBtn} ${viewBtn} ${editBtn} ${deleteBtn}</td>`;
+      const tdRow = `<tr id="${khachHang.email}">${tdMaKh} ${tdEmail} ${tdTenKH} ${tdGioiTinh} ${tdNgaySinh} ${tdDiaChi} ${tdSDT} ${tdPassword} ${tdButton}</tr>`;
+
+      return tdRow;
+    }
+
+    function formatDate(date) {
+      var d = new Date(date),
+        month = '' + (d.getMonth() + 1),
+        day = '' + d.getDate(),
+        year = d.getFullYear();
+
+      if (month.length < 2)
+        month = '0' + month;
+      if (day.length < 2)
+        day = '0' + day;
+
+      return [year, month, day].join('-');
+    }
+
+    function updateDonutChart(females, males, customers) {
+      const donutData = {
+      labels: [
+        'Female',
+        'Male'
+      ],
+      datasets: [{
+        data: [Math.round(females / customers * 100), Math.round(males / customers * 100)],
+        backgroundColor: ['#079992', '#78e08f']
+      }]
+    };
+
+      donutChart.data = donutData;
+      donutChart.update();
+    }
+
+    function clearAddInput() {
+      $("#modal-add-email-text").val("");
+      $("#modal-add-name-text").val("");
+      $("#modal-add-gender-text").prop("checked", false);
+      $("#modal-add-dob-text").val();
+      $("#modal-add-address-text").val("");
+      $("#modal-add-phone-text").val("");
+      $("#modal-add-password-text").val("");
+    }
+
+  });
+</script>
+
+

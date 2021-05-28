@@ -12,7 +12,7 @@
     <div class="card-body">
       <p class="login-box-msg">Register a new membership</p>
 
-      <form action="/Customer/Register" method="post">
+      <form action="/Customer/Register">
         <div class="input-group mb-3">
           <input type="text" class="form-control" placeholder="Full name" name="fullName" required>
           <div class="input-group-append">
@@ -22,7 +22,7 @@
           </div>
         </div>
         <div class="input-group mb-3">
-          <input type="text" class="form-control" placeholder="Phone number" name="phoneNumber" required>
+          <input type="tel" class="form-control" placeholder="Phone number" name="phoneNumber" required>
           <div class="input-group-append">
             <div class="input-group-text">
               <span class="fas fa-phone"></span>
@@ -60,4 +60,94 @@
     <!-- /.form-box -->
   </div><!-- /.card -->
 </div>
+
+@{ Html.RenderPartial("PartialLayout/_Scripts"); }
+<script src="~/Assets/plugins/toastr/toastr.min.js"></script>
+
+<script>
+
+  $(document).ready(function () {
+    $("form").submit(function (e) {
+      e.preventDefault();
+
+      const form = $(this);
+      const result = validatePhoneNumber($("[name=phoneNumber]").val());
+      const emailResult = validateEmail($("[name=email]").val());
+
+      if (!result) {
+        $(document).Toasts('create', {
+          title: 'Fail',
+          autohide: true,
+          delay: 2000,
+          body: "Incorrect phone number format!!!",
+          class: "bg-danger"
+        })
+        return false;
+      } 
+
+      if (!emailResult) {
+        $(document).Toasts('create', {
+          title: 'Fail',
+          autohide: true,
+          delay: 2000,
+          body: "Incorrect email format!!!",
+          class: "bg-danger"
+        })
+        return false;
+      }
+
+      $.ajax({
+        url: "/Customer/Register",
+        type: "POST",
+        data: form.serialize(),
+      }).done(function (data) {
+        const message = data.message;
+
+        if (message.includes("already")) {
+          $(document).Toasts('create', {
+            title: 'Fail',
+            autohide: true,
+            delay: 2000,
+            body: data.message,
+            class: "bg-danger"
+          })
+        }
+        else {
+          $(document).Toasts('create', {
+            title: 'Success',
+            autohide: true,
+            delay: 2000,
+            body: data.message,
+            class: "bg-success"
+          })
+        }
+      })
+    })
+
+    function validatePhoneNumber(str) {
+      const regex = /(09|01[2|6|8|9])+([0-9]{8})\b/g;
+      return regex.exec(str);
+    }
+
+    function validateEmail(str) {
+      const regex = /^(([^<>()[\]\\.,;:\s@@"]+(\.[^<>()[\]\\.,;:\s@@"]+)*)|(".+"))@@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      return regex.exec(str);
+    }
+
+    $("[name=phoneNumber]").keypress(function (e) {
+      if (!isNumber(e)) return false;
+    })
+
+    function isNumber(evt) {
+      evt = (evt) ? evt : window.event;
+      var charCode = (evt.which) ? evt.which : evt.keyCode;
+      if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+        return false;
+      }
+      return true;
+    }
+
+  })
+  
+</script>
 

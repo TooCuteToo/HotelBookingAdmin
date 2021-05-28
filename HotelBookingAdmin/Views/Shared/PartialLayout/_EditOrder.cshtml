@@ -1,5 +1,9 @@
 ﻿@using HotelBookingAdmin.Models
-@model List<KhachHang>
+@{ 
+  List<KhachHang> khachHangs = (List<KhachHang>) ViewData["khachHangs"];
+  List<Phong> phongTrongs = (List<Phong>) ViewData["phongTrongs"];
+  List<NhanVien> nhanViens = (List<NhanVien>)ViewData["nhanViens"];
+}
 
 <div class="modal fade" id="modal-edit" style="display: none;" aria-hidden="true">
   <div class="modal-dialog">
@@ -23,10 +27,22 @@
           </div>
 
           <div class="form-group row">
+            <label for="modal-edit-employee-no-text" class="col-sm-4 col-form-label">Employee name</label>
+            <div class="col-sm-8">
+              <select id="modal-edit-employee-no-text" class="form-control">
+                @foreach (NhanVien nv in nhanViens)
+                {
+                  <option value="@nv.MaNV">@nv.TenNV</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group row">
             <label for="modal-edit-email-text" class="col-sm-4 col-form-label">Email</label>
             <div class="col-sm-8">
               <select id="modal-edit-email-text" class="form-control">
-                @foreach (KhachHang kh in Model)
+                @foreach (KhachHang kh in khachHangs)
                 {
                   <option value="@kh.email">@kh.email</option>
                 }
@@ -37,7 +53,22 @@
           <div class="form-group row">
             <label for="modal-edit-name-text" class="col-sm-4 col-form-label">Room name</label>
             <div class="col-sm-8">
-              <input type="text" readonly class="form-control" id="modal-edit-name-text" />
+              <select id="modal-edit-name-text" class="form-control">
+                @foreach (Phong phong in phongTrongs)
+                {
+                  <option value="@phong.tenPhong">@phong.tenPhong</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <label for="modal-edit-status-text" class="col-sm-4 col-form-label">Status</label>
+            <div class="col-sm-8">
+              <select id="modal-edit-status-text" class="form-control">
+                <option value="unpaid">unpaid</option>
+                <option value="paid">paid</option>
+              </select>
             </div>
           </div>
 

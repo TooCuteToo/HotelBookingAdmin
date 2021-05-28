@@ -1,0 +1,71 @@
+﻿@using HotelBookingAdmin.Models
+@{
+  List<KhachHang> khachHangs = (List<KhachHang>)ViewData["khachHangs"];
+  List<Phong> phongTrongs = (List<Phong>)ViewData["phongTrongs"];
+  List<NhanVien> nhanViens = (List<NhanVien>)ViewData["nhanViens"];
+}
+
+<div class="modal fade" id="modal-add" style="display: none;" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Order Information</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+        <img class="img-fluid d-block m-auto" id="modal-img" src="https://taker.io/wp-content/uploads/2019/10/Online-Ordering-System-for-Restaurants-min.png" style="width: 200px;" />
+
+        <form action="" method="post" class="mt-3" id="create-order-form">
+          <div class="form-group row">
+            <label for="modal-add-email-text" class="col-sm-4 col-form-label">Email</label>
+            <div class="col-sm-8">
+              <select id="modal-add-email-text" class="form-control" required>
+                @foreach (KhachHang kh in khachHangs)
+                {
+                  <option value="@kh.email">@kh.email</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <label for="modal-add-name-text" class="col-sm-4 col-form-label">Room name</label>
+            <div class="col-sm-8">
+              <select id="modal-add-name-text" class="form-control" required>
+                @foreach (Phong phong in phongTrongs)
+                {
+                  <option value="@phong.tenPhong">@phong.tenPhong</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <label for="modal-add-booking-date-text" class="col-sm-4 col-form-label">Booking date</label>
+            <div class="col-sm-8">
+              <input type="date" class="form-control" id="modal-add-booking-date-text" min="@DateTime.Now.ToString("yyyy-MM-dd")" required/>
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <label for="modal-add-checkout-date-text" class="col-sm-4 col-form-label">Check-out date</label>
+            <div class="col-sm-8">
+              <input type="date" class="form-control" id="modal-add-checkout-date-text" required />
+            </div>
+          </div>
+
+          <div class="modal-footer justify-content-center">
+            <button type="submit" class="btn btn-success" id="add-submit-btn">Submit</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+
+
