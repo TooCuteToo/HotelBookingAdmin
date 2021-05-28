@@ -72,6 +72,11 @@
         <div class="card">
           <div class="card-header">
             <h3 class="card-title">Customer datatable</h3>
+            <a class="btn btn-warning btn-sm float-right" href="#" data-toggle="modal" data-target="#modal-add">
+              <i class="fas fa-plus">
+              </i>
+              Add
+            </a>
           </div>
           <!-- /.card-header -->
           <div class="card-body">
@@ -130,11 +135,7 @@
                       <input type="password" name="password" value="@kh.pass" disabled />
                     </td>
                     <td class="text-center w-25">
-                      <a class="btn btn-warning btn-sm" href="#" data-toggle="modal" data-target="#modal-add">
-                        <i class="fas fa-plus">
-                        </i>
-                        Add
-                      </a>
+                      
 
                       <a class="btn btn-primary btn-sm" href="#" data-toggle="modal" data-target="#modal-default">
                         <i class="fas fa-folder">
@@ -378,6 +379,7 @@
 
         console.log(result);
 
+        updatePieChar(result.notYet, result.bookingCount, result.customers);
         updateDonutChart(result.females, result.males, result.customers);
 
         updateTable();
@@ -494,6 +496,7 @@
           class: "bg-warning"
         })
 
+        updatePieChar(result.notYet, result.bookingCount, result.customers);
         updateDonutChart(result.females, result.males, result.customers);
 
         row.remove();
@@ -572,6 +575,7 @@
         console.log(result);
 
         updateDonutChart(result.females, result.males, result.customers);
+        updatePieChar(result.notYet, result.bookingCount, result.customers);
         $("#example1").append(addNewTableRow(result.kh));
         clearAddInput();
       })
@@ -587,12 +591,16 @@
       const tdGioiTinh = `<td class="text-center"><input type="checkbox" name="gender" value="Female" ${khachHang.gioiTinh === "Female" ? "checked" : null} disabled /></td>`;
       const ngaySinh = new Date(parseInt(khachHang.ngaySinh.substr(6)));
       const tdNgaySinh = `<td><input type="date" name="dob" value="${formatDate(ngaySinh)}" disabled /></td>`
-      const addBtn = `<a class="btn btn-warning btn-sm" href="#" data-toggle="modal" data-target="#modal-add"><i class="fas fa-plus"></i>Add</a>`;
+  
       const viewBtn = `<a class="btn btn-primary btn-sm" href="#" data-toggle="modal" data-target="#modal-default"><i class="fas fa-folder"></i>View</a>`
       const editBtn = `<a class="btn btn-info btn-sm" href="#" data-toggle="modal" data-target="#modal-edit"><i class="fas fa-pencil-alt"></i>Edit</a>`;
       const deleteBtn = `<a class="btn btn-danger btn-sm" href="#"><i class="fas fa-trash"></i>Delete</a>`;
 
-      const tdButton = `<td class="text-center w-25">${addBtn} ${viewBtn} ${editBtn} ${deleteBtn}</td>`;
+      @{ 
+        @:const loginCV = "@loginUser.MaCV";
+      }
+      
+      const tdButton = `<td class="text-center w-25">${viewBtn} ${editBtn} ${loginCV == "admin" ? deleteBtn : ""}</td>`;
       const tdRow = `<tr id="${khachHang.email}">${tdMaKh} ${tdEmail} ${tdTenKH} ${tdGioiTinh} ${tdNgaySinh} ${tdDiaChi} ${tdSDT} ${tdPassword} ${tdButton}</tr>`;
 
       return tdRow;
@@ -626,6 +634,22 @@
 
       donutChart.data = donutData;
       donutChart.update();
+    }
+
+    function updatePieChar(notYet, bookingCount, customers) {
+      const pieData = {
+      labels: [
+        'Not yet',
+        'Booked',
+      ],
+      datasets: [{
+        data: [Math.round(notYet / customers * 100), Math.round(bookingCount / customers * 100)],
+        backgroundColor: ['#ff793f', '#ff5252']
+      }]
+      };
+
+      pieChart.data = pieData;
+      pieChart.update();
     }
 
     function clearAddInput() {
