@@ -7,6 +7,7 @@
   List<KhachHang> khachHangs = (List<KhachHang>)ViewBag.KhachHangs;
   List<Phong> phongTrongs = (List<Phong>)ViewBag.PhongTrongs;
   List<NhanVien> nhanViens = (List<NhanVien>)ViewBag.NhanViens;
+  List<DichVu> dichVus = (List<DichVu>)ViewBag.DichVus;
   NhanVien loginUser = (NhanVien)Session["NhanVien"];
 }
 
@@ -135,9 +136,7 @@
                     </td>
                     <td>@string.Format("{0:#.00}", hd.tienThanhToan)</td>
 
-                    <td class="text-center w-25">
-                      
-
+                    <td class="text-center" style="width: 18%;">
                       <a class="btn btn-primary btn-sm" href="#" data-toggle="modal" data-target="#modal-default">
                         <i class="fas fa-folder">
                         </i>
@@ -176,8 +175,8 @@
 </section>
 
 @{ Html.RenderPartial("PartialLayout/_ViewOrder"); }
-@{ Html.RenderPartial("PartialLayout/_EditOrder", khachHangs, new ViewDataDictionary { { "khachHangs", khachHangs }, { "phongTrongs", phongTrongs }, { "nhanViens", nhanViens } }); }
-@{ Html.RenderPartial("PartialLayout/_AddOrder", khachHangs, new ViewDataDictionary { { "khachHangs", khachHangs }, { "phongTrongs", phongTrongs }, { "nhanViens", nhanViens } }); }
+@{ Html.RenderPartial("PartialLayout/_EditOrder", khachHangs, new ViewDataDictionary { { "khachHangs", khachHangs }, { "phongTrongs", phongTrongs }, { "nhanViens", nhanViens }, { "dichVus", dichVus } }); }
+@{ Html.RenderPartial("PartialLayout/_AddOrder", khachHangs, new ViewDataDictionary { { "khachHangs", khachHangs }, { "phongTrongs", phongTrongs }, { "nhanViens", nhanViens }, { "dichVus", dichVus } }); }
 
 @{ Html.RenderPartial("PartialLayout/_Scripts"); }
 
@@ -373,16 +372,30 @@ var salesGraphChartCanvas = $('#line-chart').get(0).getContext('2d')
       tienThanhToan: $("#modal-edit-total-money-text").val(),
     }
 
-    submitData(e, hoaDon);
+    const listCheckbox = $(".edit-checkbox");
+    const services = [];
+
+    listCheckbox.each((index, item) => {
+      if ($(item).prop("checked")) services.push(item.value);
+    });
+
+    submitData(e, hoaDon, services);
   })
 
 
-  function submitData(e, hoaDon) {
+    function submitData(e, hoaDon, services) {
+      const postData = {
+        hd: hoaDon,
+        services
+      }
+
+      console.log(services);
+
     $.ajax({
       url: '/Order/UpdateOrder',
       type: 'POST',
       contentType: 'application/json',
-      data: JSON.stringify(hoaDon)
+      data: JSON.stringify(postData)
     }).done(function (res) {
       updateTable(res.result);
       clearInput();
@@ -490,7 +503,29 @@ var salesGraphChartCanvas = $('#line-chart').get(0).getContext('2d')
     $("#modal-edit-checkout-date-text").prop("min", newdate);
     $("#modal-edit-checkout-date-text").val($(cols[6]).children().val());
     $("#modal-edit-total-money-text").val(cols[7].innerText);
-  }
+
+    initEditServices(cols[0].innerText);
+    }
+
+    function initEditServices(maHD) {
+      $.ajax({
+        url: "/Order/GetServicesDetail",
+        type: "POST",
+        dataType: "json",
+        data: { maHD: Number(maHD) }
+      }).done((result) => {
+        const listInput = $(".edit-checkbox");
+        console.log(result);
+
+        for (let input of listInput) {
+          for (let service of result.services) {
+            if ($(input).val() == service.maDichVu) {
+              $(input).prop("checked", true);
+            }
+          }
+        }
+      });
+    }
 
   function clearInput() {
     $("#modal-no-text").val("");
@@ -627,6 +662,12 @@ var salesGraphChartCanvas = $('#line-chart').get(0).getContext('2d')
 
     $("#modal-edit").on("hide.bs.modal", function (e) {
       $("#modal-edit-name-text").children().last().remove();
+      const listCheckbox = $(".edit-checkbox");
+
+      for (let checkbox of listCheckbox) {
+        $(checkbox).prop("checked", false);
+        $(checkbox).prop("disabled", false);
+      }
     });
 
     $("#create-order-form").submit((e) => {
@@ -639,18 +680,28 @@ var salesGraphChartCanvas = $('#line-chart').get(0).getContext('2d')
         ngayTra: $("#modal-add-checkout-date-text").val(),
       }
 
-      console.log(hoaDon)
+      const listCheckbox = $(".form-check-input");
+      const services = [];
 
-      createOrder(e, hoaDon);
+      listCheckbox.each((index, item) => {
+        if ($(item).prop("checked")) services.push(item.value);
+      });
+
+      createOrder(e, hoaDon, services);
 
     })
 
-    function createOrder(e, hoaDon) {
+    function createOrder(e, hoaDon, services) {
+      const postData = {
+        newHD: hoaDon,
+        services
+      }
+
       $.ajax({
         url: '/Order/CreateOrder',
         type: 'POST',
         contentType: 'application/json',
-        data: JSON.stringify(hoaDon)
+        data: JSON.stringify(postData)
       }).done(function (res) {
         const checkoutDate = [];
         const roomNames = [];
@@ -715,7 +766,7 @@ var salesGraphChartCanvas = $('#line-chart').get(0).getContext('2d')
         @:const loginCV = "@loginUser.MaCV";
       }
 
-      const tdButton = `<td class="text-center w-25">${viewBtn} ${editBtn} ${loginCV == "admin" ? deleteBtn : ""}</td>`;
+      const tdButton = `<td class="text-center" style="width: 18%;">${viewBtn} ${editBtn} ${loginCV == "admin" ? deleteBtn : ""}</td>`;
       const tdRow = `<tr id="${hoaDon.maHD}">${tdMaHD} ${tdMaNV} ${tdEmail} ${tdTenPhong} ${tdTinhTrang} ${tdBookingDate} ${tdCheckoutDate} ${tdTotalMoney} ${tdButton}</tr>`;
 
       return tdRow;
@@ -726,6 +777,57 @@ var salesGraphChartCanvas = $('#line-chart').get(0).getContext('2d')
       $("#modal-add-name-text").html(options.join(""));
       $("#modal-edit-name-text").html(options.join(""));
     }
+
+    function setUpCheckBox() {
+      const servicesContainer = $("#services-checkbox-container").children("div");
+      console.log(servicesContainer);
+
+      $("#add-services-checkbox-container").click((e) => {
+        const listInput = $(".add-checkbox");
+
+        if ($(e.target).val() == listInput.length) {
+          if ($(e.target).prop("checked")) {
+            listInput.each((index, item) => {
+              if (index !== listInput.length - 1) {
+                $(item).prop("checked", false);
+                $(item).prop("disabled", true);
+              }
+            })
+          } else {
+            listInput.each((index, item) => {
+              if (index !== listInput.length - 1) $(item).prop("disabled", false);
+            })
+          }
+        } else {
+          $(listInput[listInput.length - 1]).prop("checked", false);
+        }
+      })
+
+      $("#edit-services-checkbox-container").click((e) => {
+        const listInput = $(".edit-checkbox");
+
+        if ($(e.target).val() == listInput.length) {
+          if ($(e.target).prop("checked")) {
+            listInput.each((index, item) => {
+              if (index !== listInput.length - 1) {
+                $(item).prop("checked", false);
+                $(item).prop("disabled", true);
+              }
+            })
+          } else {
+            listInput.each((index, item) => {
+              if (index !== listInput.length - 1) $(item).prop("disabled", false);
+            })
+          }
+        } else {
+          $(listInput[listInput.length - 1]).prop("checked", false);
+        }
+
+      });
+
+    }
+
+    setUpCheckBox();
   })
 
 </script>

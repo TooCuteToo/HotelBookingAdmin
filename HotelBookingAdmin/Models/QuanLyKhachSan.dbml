@@ -1,10 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?><Database Name="QuanLyKhachSan" Class="QuanLyKhachSanDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
   <Connection Mode="WebSettings" ConnectionString="Data Source=LAPTOP-LGNFL6U6;Initial Catalog=QuanLyKhachSan;Integrated Security=True" SettingsObjectName="System.Configuration.ConfigurationManager.ConnectionStrings" SettingsPropertyName="QuanLyKhachSanConnectionString" Provider="System.Data.SqlClient" />
-  <Table Name="dbo.ChucVu" Member="ChucVus">
-    <Type Name="ChucVu">
-      <Column Name="MaCV" Type="System.String" DbType="VarChar(10) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="TenCV" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
-      <Association Name="ChucVu_NhanVien" Member="NhanViens" ThisKey="MaCV" OtherKey="MaCV" Type="NhanVien" />
+  <Table Name="dbo.ChiTietDichVu" Member="ChiTietDichVus">
+    <Type Name="ChiTietDichVu">
+      <Column Name="maHD" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="maDichVu" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Association Name="DichVu_ChiTietDichVu" Member="DichVu" ThisKey="maDichVu" OtherKey="maDichVu" Type="DichVu" IsForeignKey="true" />
+      <Association Name="HoaDon_ChiTietDichVu" Member="HoaDon" ThisKey="maHD" OtherKey="maHD" Type="HoaDon" IsForeignKey="true" />
     </Type>
   </Table>
   <Table Name="dbo.Phong" Member="Phongs">
@@ -21,6 +22,21 @@
       <Association Name="LoaiPhong_Phong" Member="LoaiPhong" ThisKey="maLoai" OtherKey="maLoai" Type="LoaiPhong" IsForeignKey="true" />
     </Type>
   </Table>
+  <Table Name="dbo.ChucVu" Member="ChucVus">
+    <Type Name="ChucVu">
+      <Column Name="MaCV" Type="System.String" DbType="VarChar(10) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="TenCV" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
+      <Association Name="ChucVu_NhanVien" Member="NhanViens" ThisKey="MaCV" OtherKey="MaCV" Type="NhanVien" />
+    </Type>
+  </Table>
+  <Table Name="dbo.DichVu" Member="DichVus">
+    <Type Name="DichVu">
+      <Column Name="maDichVu" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="tenDichVu" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="giaTien" Type="System.Decimal" DbType="Money" CanBeNull="true" />
+      <Association Name="DichVu_ChiTietDichVu" Member="ChiTietDichVus" ThisKey="maDichVu" OtherKey="maDichVu" Type="ChiTietDichVu" />
+    </Type>
+  </Table>
   <Table Name="dbo.HoaDon" Member="HoaDons">
     <Type Name="HoaDon">
       <Column Name="maHD" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
@@ -33,9 +49,9 @@
       <Column Name="ngayTra" Type="System.DateTime" DbType="Date" CanBeNull="true" />
       <Column Name="tinhTrang" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
       <Column Name="tienThanhToan" Type="System.Decimal" DbType="Money" CanBeNull="true" />
+      <Association Name="HoaDon_ChiTietDichVu" Member="ChiTietDichVus" ThisKey="maHD" OtherKey="maHD" Type="ChiTietDichVu" />
       <Association Name="Phong_HoaDon" Member="Phong" ThisKey="maPhong" OtherKey="maPhong" Type="Phong" IsForeignKey="true" />
-      <Association Name="KhachHang_HoaDon" Member="KhachHang" ThisKey="email" OtherKey="email" Type="KhachHang" IsForeignKey="true" />
-      <Association Name="KhachHang_HoaDon1" Member="KhachHang1" ThisKey="maKH" OtherKey="maKH" Type="KhachHang" IsForeignKey="true" />
+      <Association Name="KhachHang_HoaDon" Member="KhachHang" ThisKey="maKH" OtherKey="maKH" Type="KhachHang" IsForeignKey="true" />
       <Association Name="NhanVien_HoaDon" Member="NhanVien" ThisKey="maNV" OtherKey="MaNV" Type="NhanVien" IsForeignKey="true" />
     </Type>
   </Table>
@@ -49,8 +65,7 @@
       <Column Name="diaChi" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
       <Column Name="sdt" Type="System.String" DbType="NVarChar(10)" CanBeNull="true" />
       <Column Name="pass" Type="System.String" DbType="NVarChar(10)" CanBeNull="true" />
-      <Association Name="KhachHang_HoaDon" Member="HoaDons" ThisKey="email" OtherKey="email" Type="HoaDon" />
-      <Association Name="KhachHang_HoaDon1" Member="HoaDons1" ThisKey="maKH" OtherKey="maKH" Type="HoaDon" />
+      <Association Name="KhachHang_HoaDon" Member="HoaDons" ThisKey="maKH" OtherKey="maKH" Type="HoaDon" />
     </Type>
   </Table>
   <Table Name="dbo.LoaiPhong" Member="LoaiPhongs">

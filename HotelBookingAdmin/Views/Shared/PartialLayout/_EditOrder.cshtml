@@ -3,6 +3,7 @@
   List<KhachHang> khachHangs = (List<KhachHang>) ViewData["khachHangs"];
   List<Phong> phongTrongs = (List<Phong>) ViewData["phongTrongs"];
   List<NhanVien> nhanViens = (List<NhanVien>)ViewData["nhanViens"];
+  List<DichVu> dichVus = (List<DichVu>)ViewData["dichVus"];
 }
 
 <div class="modal fade" id="modal-edit" style="display: none;" aria-hidden="true">
@@ -69,6 +70,21 @@
                 <option value="unpaid">unpaid</option>
                 <option value="paid">paid</option>
               </select>
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <label for="modal-add-name-text" class="col-sm-4 col-form-label">Service name</label>
+            <div class="col-sm-8 row" id="edit-services-checkbox-container">
+              @foreach (DichVu dv in dichVus)
+              {
+                <div class="ml-4 col-sm-5">
+                  <input class="form-check-input edit-checkbox" type="checkbox" value="@dv.maDichVu" id="edit-service-@dv.maDichVu" name="@dv.maDichVu">
+                  <label class="form-check-label" for="edit-service-@dv.maDichVu">
+                    @dv.tenDichVu
+                  </label>
+                </div>
+              }
             </div>
           </div>
 
