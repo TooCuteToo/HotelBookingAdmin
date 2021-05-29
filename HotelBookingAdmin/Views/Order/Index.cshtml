@@ -219,7 +219,7 @@
     {
       @:checkoutDate.push("@hd.ngayTra.Value.Subtract(hd.ngayDat.Value).TotalDays");
       @:roomNames.push("@hd.tenPhong");
-      @:totalMoneys.push(@hd.tienThanhToan);
+      @:totalMoneys.push(@Decimal.Parse(string.Format("{0:#.00}", hd.tienThanhToan)));
     }
 
     var barChartData = {
@@ -394,7 +394,7 @@ var salesGraphChartCanvas = $('#line-chart').get(0).getContext('2d')
 
       for (let hd of listHD) {
         roomNames.push(hd.tenPhong);
-        totalMoneys.push(hd.tienThanhToan)
+        totalMoneys.push(Math.round(hd.tienThanhToan * 100) / 100);
 
         const dt1 = new Date(parseInt(hd.ngayDat.substr(6)));
         const dt2 = new Date(parseInt(hd.ngayTra.substr(6)));
@@ -572,7 +572,7 @@ var salesGraphChartCanvas = $('#line-chart').get(0).getContext('2d')
 
         for (let hd of listHD) {
           roomNames.push(hd.tenPhong);
-          totalMoneys.push(hd.tienThanhToan)
+          totalMoneys.push(Math.round(hd.tienThanhToan * 100) / 100)
 
           const dt1 = new Date(parseInt(hd.ngayDat.substr(6)));
           const dt2 = new Date(parseInt(hd.ngayTra.substr(6)));
@@ -659,7 +659,7 @@ var salesGraphChartCanvas = $('#line-chart').get(0).getContext('2d')
 
         for (let hd of listHD) {
           roomNames.push(hd.tenPhong);
-          totalMoneys.push(hd.tienThanhToan)
+          totalMoneys.push(Math.round(hd.tienThanhToan * 100) / 100);
 
           const dt1 = new Date(parseInt(hd.ngayDat.substr(6)));
           const dt2 = new Date(parseInt(hd.ngayTra.substr(6)));
