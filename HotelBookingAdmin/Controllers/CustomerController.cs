@@ -23,7 +23,7 @@ namespace HotelBookingAdmin.Controllers
     {
       string email = fc["email"];
       string password = fc["password"];
-      NhanVien nv = DBHelper.getLoginEmployee(email, password);
+      NhanVien nv = DBEmployee.getLoginEmployee(email, password);
 
       if (nv != null)
       {
@@ -47,7 +47,7 @@ namespace HotelBookingAdmin.Controllers
       string email = fc["email"];
       string dob = fc["dob"];
 
-      NhanVien nv = DBHelper.createEmployee(fullName, phoneNumber, dob, email);
+      NhanVien nv = DBEmployee.createEmployee(fullName, phoneNumber, dob, email);
 
       if (nv != null && nv.TenNV != null)
       {
@@ -65,7 +65,7 @@ namespace HotelBookingAdmin.Controllers
     [HttpPost]
     public JsonResult PasswordRecovery(string email)
     {
-      string recoveryPassword = DBHelper.getPassword(email);
+      string recoveryPassword = DBEmployee.getPassword(email);
       
       if (recoveryPassword.Length != 0 || recoveryPassword != null)
       {
@@ -94,21 +94,21 @@ namespace HotelBookingAdmin.Controllers
     [HttpGet]
     public ActionResult Employee()
     {
-      ViewBag.NhanViens = DBHelper.getEmployees();
+      ViewBag.NhanViens = DBEmployee.getEmployees();
       return View();
     }
 
     [HttpPost]
     public JsonResult Employee(int maNV)
     {
-      string message = DBHelper.deleteEmployee(maNV);
+      string message = DBEmployee.deleteEmployee(maNV);
       return Json(new { message });
     }
 
     [HttpPost]
     public JsonResult UpdateEmployee(NhanVien nv)
     {
-      NhanVien result = DBHelper.updateEmployee(nv);
+      NhanVien result = DBEmployee.updateEmployee(nv);
       NhanVien loginNv = (NhanVien)Session["NhanVien"];
 
       if (nv.MaNV == loginNv.MaNV)
@@ -127,12 +127,12 @@ namespace HotelBookingAdmin.Controllers
     [HttpGet]
     public ActionResult Customer()
     {
-      List<KhachHang> customers = DBHelper.getCustomers();
+      List<KhachHang> customers = DBCustomer.getCustomers();
       ViewBag.KhachHangs = customers;
       ViewBag.Males = customers.Where(item => item.gioiTinh == "Male").ToList();
       ViewBag.Females = customers.Where(item => item.gioiTinh == "Female").ToList();
 
-      List<HoaDon> hoaDons = DBHelper.getHoaDons();
+      List<HoaDon> hoaDons = DBOrder.getHoaDons();
       List<string> listEmail = new List<string>();
 
       float bookingCount = 0;
@@ -158,13 +158,13 @@ namespace HotelBookingAdmin.Controllers
     [HttpPost]
     public JsonResult UpdateCustomer(KhachHang updatedKH)
     {
-      KhachHang kh = DBHelper.UpdateCustomer(updatedKH);
+      KhachHang kh = DBCustomer.UpdateCustomer(updatedKH);
 
-      List<KhachHang> customers = DBHelper.getCustomers();
+      List<KhachHang> customers = DBCustomer.getCustomers();
       float males = customers.Where(item => item.gioiTinh == "Male").ToList().Count;
       float females = customers.Where(item => item.gioiTinh == "Female").ToList().Count;
 
-      List<HoaDon> hoaDons = DBHelper.getHoaDons();
+      List<HoaDon> hoaDons = DBOrder.getHoaDons();
       List<string> listEmail = new List<string>();
 
       float bookingCount = 0;
@@ -190,12 +190,12 @@ namespace HotelBookingAdmin.Controllers
     [HttpPost]
     public JsonResult DeleteCustomer(KhachHang deletedKH)
     {
-      string message = DBHelper.deleteCustomer(deletedKH);
-      List<KhachHang> customers = DBHelper.getCustomers();
+      string message = DBCustomer.deleteCustomer(deletedKH);
+      List<KhachHang> customers = DBCustomer.getCustomers();
       float males = customers.Where(item => item.gioiTinh == "Male").ToList().Count;
       float females = customers.Where(item => item.gioiTinh == "Female").ToList().Count;
 
-      List<HoaDon> hoaDons = DBHelper.getHoaDons();
+      List<HoaDon> hoaDons = DBOrder.getHoaDons();
       List<string> listEmail = new List<string>();
 
       float bookingCount = 0;
@@ -221,12 +221,12 @@ namespace HotelBookingAdmin.Controllers
     [HttpPost]
     public JsonResult CreateCustomer(KhachHang newCustomer)
     {
-      KhachHang kh = DBHelper.createCustomer(newCustomer);
-      List<KhachHang> customers = DBHelper.getCustomers();
+      KhachHang kh = DBCustomer.createCustomer(newCustomer);
+      List<KhachHang> customers = DBCustomer.getCustomers();
       float males = customers.Where(item => item.gioiTinh == "Male").ToList().Count;
       float females = customers.Where(item => item.gioiTinh == "Female").ToList().Count;
 
-      List<HoaDon> hoaDons = DBHelper.getHoaDons();
+      List<HoaDon> hoaDons = DBOrder.getHoaDons();
       List<string> listEmail = new List<string>();
 
       float bookingCount = 0;

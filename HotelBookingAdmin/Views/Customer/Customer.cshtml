@@ -134,9 +134,7 @@
                     <td>
                       <input type="password" name="password" value="@kh.pass" disabled />
                     </td>
-                    <td class="text-center w-25">
-                      
-
+                    <td class="text-center" style="width: 18%;">
                       <a class="btn btn-primary btn-sm" href="#" data-toggle="modal" data-target="#modal-default">
                         <i class="fas fa-folder">
                         </i>
@@ -600,7 +598,7 @@
         @:const loginCV = "@loginUser.MaCV";
       }
       
-      const tdButton = `<td class="text-center w-25">${viewBtn} ${editBtn} ${loginCV == "admin" ? deleteBtn : ""}</td>`;
+      const tdButton = `<td class="text-center" style="width: 18%;">${viewBtn} ${editBtn} ${loginCV == "admin" ? deleteBtn : ""}</td>`;
       const tdRow = `<tr id="${khachHang.email}">${tdMaKh} ${tdEmail} ${tdTenKH} ${tdGioiTinh} ${tdNgaySinh} ${tdDiaChi} ${tdSDT} ${tdPassword} ${tdButton}</tr>`;
 
       return tdRow;

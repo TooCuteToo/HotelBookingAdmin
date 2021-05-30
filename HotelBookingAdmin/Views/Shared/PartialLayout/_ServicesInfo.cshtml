@@ -1,0 +1,38 @@
+﻿
+@using HotelBookingAdmin.Models
+@{
+  List<DichVu> dichVus = (List<DichVu>)ViewData["dichVus"];
+}
+
+<div class="modal fade" id="modal-services" style="display: none;" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Services Information</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+        <img class="img-fluid d-block m-auto" id="modal-img" src="https://codecungtrung.com/wp-content/uploads/2019/12/pr.png" style="width: 200px;" />
+
+        <form action="" method="post" class="mt-3" id="create-order-form">
+          @foreach (DichVu dv in dichVus)
+          {
+            <div class="form-group m-auto d-flex w-50 justify-content-between">
+              <label for="modal-add-email-text" class="col-form-label w-50 text-right">@dv.tenDichVu</label>
+              <div class="text-end w-25 col-form-label">
+                $@string.Format("{0:#.00}", dv.giaTien)
+              </div>
+            </div>
+          }
+        </form>
+      </div>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+
+

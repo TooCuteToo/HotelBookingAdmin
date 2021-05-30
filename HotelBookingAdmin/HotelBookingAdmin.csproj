@@ -101,7 +101,6 @@
     <Content Include="Assets\css\alt\adminlte.pages.min.css" />
     <Content Include="Assets\css\alt\adminlte.plugins.css" />
     <Content Include="Assets\css\alt\adminlte.plugins.min.css" />
-    <Content Include="Assets\img\AdminLTELogo.png" />
     <Content Include="Assets\img\avatar.png" />
     <Content Include="Assets\img\avatar2.png" />
     <Content Include="Assets\img\avatar3.png" />
@@ -2027,12 +2026,18 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\CustomerController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\InvoiceController.cs" />
     <Compile Include="Controllers\OrderController.cs" />
     <Compile Include="Controllers\RoomController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\DBCustomer.cs" />
+    <Compile Include="Helpers\DBEmployee.cs" />
     <Compile Include="Helpers\DBHelper.cs" />
+    <Compile Include="Helpers\DBOrder.cs" />
+    <Compile Include="Helpers\DBRoom.cs" />
+    <Compile Include="Helpers\DBServices.cs" />
     <Compile Include="Helpers\NavigationIndicatorHelpder.cs" />
     <Compile Include="Models\QuanLyKhachSan.designer.cs">
       <AutoGen>True</AutoGen>
@@ -2166,6 +2171,8 @@
     <Content Include="Views\Shared\PartialLayout\_ViewCustomer.cshtml" />
     <Content Include="Views\Shared\PartialLayout\_AddCustomer.cshtml" />
     <Content Include="Views\Shared\PartialLayout\_AddOrder.cshtml" />
+    <Content Include="Views\Shared\PartialLayout\_ServicesInfo.cshtml" />
+    <Content Include="Views\Invoice\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -22,7 +22,7 @@ namespace HotelBookingAdmin.Controllers
 
       ViewBag.StatisticsInfo = DBHelper.getStatistics();
       ViewBag.TotalRoom = DBHelper.countTotalRoom();
-      ViewBag.Phongs = DBHelper.getPhongs();
+      ViewBag.Phongs = DBRoom.getPhongs();
       ViewBag.RatePercents = DBHelper.getRatePercent();
 
       return View();
