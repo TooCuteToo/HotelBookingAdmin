@@ -162,6 +162,7 @@
     <Content Include="Assets\img\room1.jpg" />
     <Content Include="Assets\img\sad.png" />
     <Content Include="Assets\img\user1-128x128.jpg" />
+    <Content Include="Assets\img\user10.png" />
     <Content Include="Assets\img\user2-160x160.jpg" />
     <Content Include="Assets\img\user3-128x128.jpg" />
     <Content Include="Assets\img\user4-128x128.jpg" />
@@ -2032,13 +2033,13 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Helpers\DBCustomer.cs" />
-    <Compile Include="Helpers\DBEmployee.cs" />
-    <Compile Include="Helpers\DBHelper.cs" />
-    <Compile Include="Helpers\DBOrder.cs" />
-    <Compile Include="Helpers\DBRoom.cs" />
-    <Compile Include="Helpers\DBServices.cs" />
     <Compile Include="Helpers\NavigationIndicatorHelpder.cs" />
+    <Compile Include="Models\DBCustomer.cs" />
+    <Compile Include="Models\DBEmployee.cs" />
+    <Compile Include="Models\DBHelper.cs" />
+    <Compile Include="Models\DBOrder.cs" />
+    <Compile Include="Models\DBRoom.cs" />
+    <Compile Include="Models\DBServices.cs" />
     <Compile Include="Models\QuanLyKhachSan.designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

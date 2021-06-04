@@ -163,14 +163,11 @@
                         Edit
                       </a>
 
-                      @if (loginUser.MaCV == "admin")
-                      {
-                        <a class="btn btn-danger btn-sm" href="#">
-                          <i class="fas fa-trash">
-                          </i>
-                          Delete
-                        </a>
-                      }
+                      <a class="btn btn-danger btn-sm" href="#">
+                        <i class="fas fa-trash">
+                        </i>
+                        Delete
+                      </a>
                     </td>
                   </tr>
                 }
@@ -782,7 +779,7 @@ var salesGraphChartCanvas = $('#line-chart').get(0).getContext('2d')
         @:const loginCV = "@loginUser.MaCV";
       }
 
-      const tdButton = `<td class="text-center" style="width: 22%;">${viewBtn} ${printBtn} ${editBtn} ${loginCV == "admin" ? deleteBtn : ""}</td>`;
+      const tdButton = `<td class="text-center" style="width: 22%;">${viewBtn} ${printBtn} ${editBtn} ${deleteBtn}</td>`;
       const tdRow = `<tr id="${hoaDon.maHD}">${tdMaHD} ${tdMaNV} ${tdEmail} ${tdTenPhong} ${tdTinhTrang} ${tdBookingDate} ${tdCheckoutDate} ${tdTotalMoney} ${tdButton}</tr>`;
 
       return tdRow;
