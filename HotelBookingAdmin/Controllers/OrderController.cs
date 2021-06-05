@@ -25,9 +25,9 @@ namespace HotelBookingAdmin.Controllers
     [HttpPost]
     public JsonResult UpdateOrder(HoaDon hd, string[] services)
     {
-      HoaDon kq = DBOrder.updateHoaDon(hd);
-      DBServices.removeServicesDetail(kq);
+      DBServices.removeServicesDetail(hd);
       DBServices.createServicesDetail(hd, services);
+      HoaDon kq = DBOrder.updateHoaDon(hd);
       HoaDon updatedHD = DBOrder.getHoaDon(kq);
 
       return Json(new { result = updatedHD, listHD = DBOrder.getHoaDons(), phongTrongs = DBRoom.getPhongs().Where(item => item.tinhTrang == "empty").ToList() });
@@ -48,7 +48,7 @@ namespace HotelBookingAdmin.Controllers
 
       HoaDon kq = DBOrder.createHoaDon(newHD);
       DBServices.createServicesDetail(newHD, services);
-      HoaDon hd = DBOrder.getHoaDon(kq);
+      HoaDon hd = DBOrder.updateHoaDon(kq);
 
       return Json(new { result = hd, listHD = DBOrder.getHoaDons(), phongTrongs = DBRoom.getPhongs().Where(item => item.tinhTrang == "empty").ToList() });
     }

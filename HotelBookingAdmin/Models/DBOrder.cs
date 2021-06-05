@@ -83,7 +83,7 @@ namespace HotelBookingAdmin.Helpers
 
         if (phong.giamGia != null)
         {
-          hd.tienThanhToan = (phong.giaPhong - phong.giamGia) * (decimal)totalDays;
+          hd.tienThanhToan = (phong.giaPhong - phong.giamGia) * (decimal)totalDays + DBServices.getTotalServicesMoney(hd);
           db.SubmitChanges();
 
           return new HoaDon
@@ -100,7 +100,7 @@ namespace HotelBookingAdmin.Helpers
           };
         }
 
-        hd.tienThanhToan = phong.giaPhong * (decimal)totalDays;
+        hd.tienThanhToan = phong.giaPhong * (decimal)totalDays + DBServices.getTotalServicesMoney(hd);
         db.SubmitChanges();
 
         return new HoaDon

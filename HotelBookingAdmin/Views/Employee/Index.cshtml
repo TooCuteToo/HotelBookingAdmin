@@ -13,7 +13,7 @@
     <div class="card-body">
       <p class="login-box-msg">Sign in to start your session</p>
 
-      <form action="/Employee/Index" method="post">
+      <form action="/Customer/Index" method="post">
         <div class="input-group mb-3">
           <input type="email" class="form-control" placeholder="Email" name="email" required>
           <div class="input-group-append">
@@ -42,10 +42,10 @@
       <!-- /.social-auth-links -->
 
       <p class="mb-1">
-        <a href="@Url.Action("PasswordRecovery", "Employee")">I forgot my password</a>
+        <a href="@Url.Action("PasswordRecovery", "Customer")">I forgot my password</a>
       </p>
       <p class="mb-0">
-        <a href="@Url.Action("Register", "Employee")">Register a new membership</a>
+        <a href="@Url.Action("Register", "Customer")">Register a new membership</a>
       </p>
     </div>
     <!-- /.card-body -->

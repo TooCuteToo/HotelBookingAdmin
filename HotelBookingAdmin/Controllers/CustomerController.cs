@@ -10,7 +10,6 @@ namespace HotelBookingAdmin.Controllers
 {
   public class CustomerController : Controller
   {
-
     #region Login/Register/Profile
     // GET: Customer
     public ActionResult Index()
@@ -31,7 +30,7 @@ namespace HotelBookingAdmin.Controllers
         return Json(new { message = "success" });
       }
 
-      return Json(new { message = "fail"});
+      return Json(new { message = "fail" });
     }
 
     public ActionResult Register()
@@ -56,7 +55,7 @@ namespace HotelBookingAdmin.Controllers
 
       return Json(new { message = email + " is already existed" });
     }
-  
+
     public ActionResult PasswordRecovery()
     {
       return View();
@@ -66,7 +65,7 @@ namespace HotelBookingAdmin.Controllers
     public JsonResult PasswordRecovery(string email)
     {
       string recoveryPassword = DBEmployee.getPassword(email);
-      
+
       if (recoveryPassword.Length != 0 || recoveryPassword != null)
       {
         return Json(new { password = recoveryPassword });

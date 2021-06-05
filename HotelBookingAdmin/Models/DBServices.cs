@@ -42,9 +42,6 @@ namespace HotelBookingAdmin.Helpers
           db.ChiTietDichVus.InsertOnSubmit(ct);
           db.SubmitChanges();
 
-          db.HoaDons.FirstOrDefault(item => item.maHD == hd.maHD).tienThanhToan += getTotalServicesMoney(hd);
-          db.SubmitChanges();
-
           return;
         }
 
@@ -65,8 +62,6 @@ namespace HotelBookingAdmin.Helpers
         db.ChiTietDichVus.InsertAllOnSubmit(listServices);
         db.SubmitChanges();
 
-        db.HoaDons.FirstOrDefault(item => item.maHD == hd.maHD).tienThanhToan += getTotalServicesMoney(hd);
-        db.SubmitChanges();
       }
     }
 
