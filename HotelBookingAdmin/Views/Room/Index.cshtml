@@ -346,6 +346,18 @@
         giamGia: tienGiamGia ? $("#modal-edit-price-text").val() * tienGiamGia : null
       }
 
+      if (phong.giaPhong < 10 || phong.giaPhong > 300) {
+        $(document).Toasts('create', {
+          title: 'Error',
+          autohide: true,
+          delay: 2000,
+          body: "Room's price is not valid!!!",
+          class: "bg-danger"
+        })
+
+        return false;
+      }
+
       submitData(e, phong);
     });
 

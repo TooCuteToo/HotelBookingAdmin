@@ -30,7 +30,7 @@ namespace HotelBookingAdmin.Controllers
       HoaDon kq = DBOrder.updateHoaDon(hd);
       HoaDon updatedHD = DBOrder.getHoaDon(kq);
 
-      return Json(new { result = updatedHD, listHD = DBOrder.getHoaDons(), phongTrongs = DBRoom.getPhongs().Where(item => item.tinhTrang == "empty").ToList() });
+      return Json(new { result = updatedHD, listHD = DBOrder.getHoaDons().Where(item => item.tinhTrang == false).ToList(), phongTrongs = DBRoom.getPhongs().Where(item => item.tinhTrang == "empty").ToList() });
     }
 
     [HttpPost]
@@ -50,7 +50,7 @@ namespace HotelBookingAdmin.Controllers
       DBServices.createServicesDetail(newHD, services);
       HoaDon hd = DBOrder.updateHoaDon(kq);
 
-      return Json(new { result = hd, listHD = DBOrder.getHoaDons(), phongTrongs = DBRoom.getPhongs().Where(item => item.tinhTrang == "empty").ToList() });
+      return Json(new { result = hd, listHD =  DBOrder.getHoaDons().Where(item => item.tinhTrang == false).ToList(), phongTrongs = DBRoom.getPhongs().Where(item => item.tinhTrang == "empty").ToList() });
     }
 
     [HttpPost]

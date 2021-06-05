@@ -33,7 +33,12 @@ namespace HotelBookingAdmin.Controllers
     {
       List<Phong> listPhong = DBRoom.updateRoom(updatePhong);
       HoaDon hd = DBOrder.getHoaDons().FirstOrDefault(item => item.maPhong == updatePhong.maPhong);
-      DBOrder.updateHoaDon(hd);
+      
+      if (hd != null)
+      {
+        DBOrder.updateHoaDon(hd);
+      }
+
       return Json(new { phongs = listPhong });
     }
   }

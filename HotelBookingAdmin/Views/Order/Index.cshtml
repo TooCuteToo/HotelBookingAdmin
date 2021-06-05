@@ -228,9 +228,12 @@
 
     @foreach (HoaDon hd in hoaDons)
     {
-      @:checkoutDate.push("@hd.ngayTra.Value.Subtract(hd.ngayDat.Value).TotalDays");
+      if (hd.tinhTrang == false)
+      {
+         @:checkoutDate.push("@hd.ngayTra.Value.Subtract(hd.ngayDat.Value).TotalDays");
       @:roomNames.push("@hd.tenPhong");
       @:totalMoneys.push(@Decimal.Parse(string.Format("{0:#.00}", hd.tienThanhToan)));
+      }
     }
 
     var barChartData = {
@@ -841,6 +844,23 @@ var salesGraphChartCanvas = $('#line-chart').get(0).getContext('2d')
     }
 
     setUpCheckBox();
+
+
+    function updateDate() {
+      const checkoutDateVal = new Date($("[name=ngayDat]").val());
+      const checkoutDateMin = new Date(checkoutDateVal.setDate(checkoutDateVal.getDate() + 1));
+      const month = (checkoutDateMin.getUTCMonth() + 1).toString().padStart(2, '0'); //months from 1-12
+      const day = checkoutDateMin.getUTCDate().toString().padStart(2, "0");
+      const year = checkoutDateMin.getUTCFullYear();
+
+      const newdate = year + "-" + month + "-" + day;
+
+      $("[name=ngayTra]").prop("min", newdate);
+      $("[name=ngayTra]").val(newdate);
+    }
+
+
+    updateDate();
   })
 
 </script>
